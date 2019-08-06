@@ -1,5 +1,7 @@
 'use strict';
 
+const CARDS_COUNT = 3;
+
 const makeMenuTemplate = () => (
   `<input
       type="radio"
@@ -460,16 +462,15 @@ const renderComponent = (parent, HTML) => {
   parent.insertAdjacentHTML(`beforeend`, HTML);
 };
 
-const renderMockComponents = () => {
-  const mainContainer = document.querySelector(`.main`);
-  const menuContainer = mainContainer.querySelector(`.main__control`);
-  const searchContainer = mainContainer.querySelector(`.main__search`);
-  const filterContainer = mainContainer.querySelector(`.main__filter`);
-  const boardContainer = mainContainer.querySelector(`.board`);
-  const boardFilterContainer = boardContainer.querySelector(`.board__filter-list`);
-  const boardTasksContainer = boardContainer.querySelector(`.board__tasks`);
-  const CARDS_COUNT = 3;
+const mainContainer = document.querySelector(`.main`);
+const menuContainer = mainContainer.querySelector(`.main__control`);
+const searchContainer = mainContainer.querySelector(`.main__search`);
+const filterContainer = mainContainer.querySelector(`.main__filter`);
+const boardContainer = mainContainer.querySelector(`.board`);
+const boardFilterContainer = boardContainer.querySelector(`.board__filter-list`);
+const boardTasksContainer = boardContainer.querySelector(`.board__tasks`);
 
+const renderMockComponents = () => {
   renderComponent(menuContainer, makeMenuTemplate());
   renderComponent(searchContainer, makeSearchTemplate());
   renderComponent(filterContainer, makeFilterTemplate());
