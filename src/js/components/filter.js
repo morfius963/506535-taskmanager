@@ -7,5 +7,5 @@ export const makeFilterTemplate = ({title, count}) => (
     checked
   />
   <label for="filter__${title}" class="filter__label">
-  ${title.toUpperCase()} <span class="filter__${title}-count">${count}</span></label>`.trim()
+  ${title.toUpperCase()} <span class="filter__${title}-count">${count}</span></label>`
 );

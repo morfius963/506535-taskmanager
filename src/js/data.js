@@ -1,4 +1,9 @@
 import {randomArray} from './utils.js';
+import {getOverdueFilterCount} from './utils.js';
+import {getTodayFilterCount} from './utils.js';
+import {getBooleanFilterCount} from './utils.js';
+import {getRepeatingFilterValue} from './utils.js';
+import {getTagsFilterCount} from './utils.js';
 
 const TASK_COUNT = 20;
 
@@ -48,24 +53,12 @@ const getFilterData = (filterName) => ({
 const getFilterCount = (name, taskList) => {
   const FilterValues = {
     'all': taskList.length,
-
-    'overdue': taskList.reduce((acc, {dueDate}) =>
-      (new Date(Date.now()).getDate() > new Date(dueDate).getDate() ? acc + 1 : acc), 0),
-
-    'today': taskList.reduce((acc, {dueDate}) =>
-      (new Date(dueDate).toDateString() === new Date(Date.now()).toDateString() ? acc + 1 : acc), 0),
-
-    'favorites': taskList.reduce((acc, {isFavorite}) =>
-      (isFavorite ? acc + 1 : acc), 0),
-
-    'repeating': taskList.reduce((acc, {repeatingDays}) =>
-      (Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? acc + 1 : acc), 0),
-
-    'tags': taskList.reduce((acc, {tags}) =>
-      (tags.size > 0 ? acc + 1 : acc), 0),
-
-    'archive': taskList.reduce((acc, {isArchive}) =>
-      (isArchive ? acc + 1 : acc), 0)
+    'overdue': getOverdueFilterCount(taskList),
+    'today': getTodayFilterCount(taskList),
+    'favorites': getBooleanFilterCount(taskList, `isFavorite`),
+    'repeating': getRepeatingFilterValue(taskList),
+    'tags': getTagsFilterCount(taskList),
+    'archive': getBooleanFilterCount(taskList, `isArchive`)
   };
 
   return FilterValues[name];

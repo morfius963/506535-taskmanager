@@ -51,5 +51,5 @@ export const makeTaskTemplate = ({description, dueDate, repeatingDays, tags, col
         </div>
       </div>
     </div>
-  </article>`.trim()
+  </article>`
 );

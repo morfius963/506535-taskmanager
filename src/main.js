@@ -5,9 +5,11 @@ import {makeTaskTemplate} from './js/components/task.js';
 import {makeTaskEditTemplate} from './js/components/task-edit.js';
 import {makeLoadMoreTemplate} from './js/components/load-more-button.js';
 import {makeBoardFilterTemplate} from './js/components/board-filters.js';
-
 import {filters as mainFiltersData} from './js/data.js';
 import {tasks as mainTasksData} from './js/data.js';
+
+const RENDER_STEP = 8;
+const CURRENT_CARDS = 8;
 
 const menuContainer = document.querySelector(`.main__control`);
 const mainSearchContainer = document.querySelector(`.main__search`);
@@ -49,8 +51,8 @@ const renderMockComponents = () => {
 renderMockComponents();
 
 const taskLoadState = {
-  current: document.querySelectorAll(`.card`).length,
-  step: 8,
+  current: CURRENT_CARDS,
+  step: RENDER_STEP,
   max: mainTasksData.length
 };
 
