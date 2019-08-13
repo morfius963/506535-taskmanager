@@ -15,12 +15,6 @@ const mainFilterContainer = document.querySelector(`.main__filter`);
 const mainContentContainer = document.querySelector(`.board`);
 const tasksContainer = document.querySelector(`.board__tasks`);
 
-const taskLoadState = {
-  current: 8,
-  step: 8,
-  max: 20
-};
-
 const renderTasks = (container, HTML) => {
   container.insertAdjacentHTML(`beforeend`, HTML);
 };
@@ -45,7 +39,7 @@ const renderMockComponents = () => {
 
   renderTasks(tasksContainer, makeTaskEditTemplate(mainTasksData[0]));
 
-  for (let i = 1; i < taskLoadState.current; i++) {
+  for (let i = 1; i < 8; i++) {
     renderTasks(tasksContainer, makeTaskTemplate(mainTasksData[i]));
   }
 
@@ -53,6 +47,12 @@ const renderMockComponents = () => {
 };
 
 renderMockComponents();
+
+const taskLoadState = {
+  current: document.querySelectorAll(`.card`).length,
+  step: 8,
+  max: mainTasksData.length
+};
 
 const loadMoreBtn = document.querySelector(`.load-more`);
 loadMoreBtn.addEventListener(`click`, () => {

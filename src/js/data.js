@@ -4,7 +4,7 @@ const TASK_COUNT = 20;
 
 const filterNames = [`all`, `overdue`, `today`, `favorites`, `repeating`, `tags`, `archive`];
 
-export const getTaskData = () => ({
+const getTaskData = () => ({
   description: [
     `Изучить теорию`,
     `Сделать домашку`,
@@ -40,7 +40,7 @@ export const getTaskData = () => ({
   isArchive: Boolean(Math.round(Math.random()))
 });
 
-export const getFilterData = (filterName) => ({
+const getFilterData = (filterName) => ({
   title: filterName,
   count: getFilterCount(filterName, tasks)
 });
