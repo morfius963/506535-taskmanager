@@ -47,7 +47,7 @@ const getFilterData = (filterName) => ({
 
 const getFilterCount = (name, taskList) => {
   const FilterValues = {
-    'all': tasks.length,
+    'all': taskList.length,
     'overdue': taskList.reduce((acc, {dueDate}) =>
       (new Date(Date.now()).getDate() > new Date(dueDate).getDate() ? acc + 1 : acc), 0),
 
