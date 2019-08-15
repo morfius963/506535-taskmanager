@@ -5,7 +5,8 @@ export const makeFilterTemplate = (filters) => (
       id="filter__${title}"
       class="filter__input visually-hidden"
       name="filter"
-      checked
+      ${title === `all` ? `checked` : ``}
+      ${count > 0 ? `` : `disabled`}
     />
     <label for="filter__${title}" class="filter__label">
     ${title.toUpperCase()} <span class="filter__${title}-count">${count}</span></label>`)

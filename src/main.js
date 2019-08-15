@@ -47,18 +47,22 @@ const taskLoadState = {
 };
 
 const loadMoreBtn = document.querySelector(`.load-more`);
-loadMoreBtn.addEventListener(`click`, () => {
-  const step = taskLoadState.current + taskLoadState.step;
 
-  for (let i = taskLoadState.current; i < step; i++) {
-    renderTasks(tasksContainer, makeTaskTemplate(mainTasksData[i]));
+const onLoadBtnClick = () => {
+  const current = taskLoadState.current;
+  const step = current + taskLoadState.step;
 
-    if (i === taskLoadState.max - 1) {
-      loadMoreBtn.classList.add(`visually-hidden`);
-      taskLoadState.current = taskLoadState.max;
-      break;
-    }
+  mainTasksData.slice(current, step).forEach((task) => {
+    renderTasks(tasksContainer, makeTaskTemplate(task));
+  });
+
+  if (step >= taskLoadState.max) {
+    loadMoreBtn.removeEventListener(`click`, onLoadBtnClick);
+    loadMoreBtn.classList.add(`visually-hidden`);
+    taskLoadState.current = taskLoadState.max;
+  } else {
+    taskLoadState.current = step;
   }
+};
 
-  taskLoadState.current = step;
-});
+loadMoreBtn.addEventListener(`click`, onLoadBtnClick);
