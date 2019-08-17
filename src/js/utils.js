@@ -1,12 +1,10 @@
-export const randomArray = (arr) => {
-  const oldArray = arr.slice().sort(() => Math.random() - 0.5);
-  const newArray = [];
+export const getRandomNum = (min, max) => Math.floor(min + Math.random() * (max + 1 - min));
 
-  for (let i = 0; i <= Math.floor(Math.random() * 3); i++) {
-    newArray.push(oldArray[i]);
-  }
+export const getRandomArray = (arr, min, max) => {
+  const sortedArray = arr.slice().sort(() => Math.random() - 0.5);
+  const randomMax = getRandomNum(min, max);
 
-  return newArray;
+  return sortedArray.slice(min, randomMax);
 };
 
 export const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
