@@ -1,11 +1,20 @@
-import {randomArray} from './utils.js';
+import {getRandomArray} from './utils.js';
 import {getOverdueFilterCount} from './utils.js';
 import {getTodayFilterCount} from './utils.js';
 import {getBooleanFilterCount} from './utils.js';
 import {getRepeatingFilterValue} from './utils.js';
 import {getTagsFilterCount} from './utils.js';
+// змінити getRandomArray від 0 до 3 для тегів у новій вітці 4 завдання
 
-const TASK_COUNT = 20;
+const MOCK_DATA_COUNT = {
+  TAG: {
+    MIN: 0,
+    MAX: 3
+  },
+  TASK: {
+    COUNT: 20
+  }
+};
 
 const filterNames = [`all`, `overdue`, `today`, `favorites`, `repeating`, `tags`, `archive`];
 
@@ -25,7 +34,7 @@ const getTaskData = () => ({
     'Sa': false,
     'Su': false
   },
-  tags: new Set(randomArray([
+  tags: new Set(getRandomArray([
     `homework`,
     `theory`,
     `practice`,
@@ -33,7 +42,7 @@ const getTaskData = () => ({
     `keks`,
     `relax`,
     `work`
-  ])),
+  ]), MOCK_DATA_COUNT.TAG.MIN, MOCK_DATA_COUNT.TAG.MAX),
   color: [
     `black`,
     `yellow`,
@@ -65,7 +74,7 @@ const getFilterCount = (name, taskList) => {
 };
 
 // структура даних всіх тасків
-export const tasks = new Array(TASK_COUNT).fill(``).map(getTaskData);
+export const tasks = new Array(MOCK_DATA_COUNT.TASK.COUNT).fill(``).map(getTaskData);
 
 // сткуртура даних усіх фільтрів
 export const filters = filterNames.map(getFilterData);
