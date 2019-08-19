@@ -22,9 +22,9 @@ export const getRepeatingFilterValue = (tasks) => tasks.reduce((acc, {repeatingD
 export const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
   (tags.size > 0 ? acc + 1 : acc), 0);
 
-export const Position = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+export const POSITION = {
+  afterbegin: `afterbegin`,
+  beforeend: `beforeend`
 };
 
 export const createElement = (template) => {
@@ -35,10 +35,10 @@ export const createElement = (template) => {
 
 export const renderElement = (container, element, place) => {
   switch (place) {
-    case Position.AFTERBEGIN:
+    case POSITION.afterbegin:
       container.prepend(element);
       break;
-    case Position.BEFOREEND:
+    case POSITION.beforeend:
       container.append(element);
       break;
   }
