@@ -21,3 +21,31 @@ export const getRepeatingFilterValue = (tasks) => tasks.reduce((acc, {repeatingD
 
 export const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
   (tags.size > 0 ? acc + 1 : acc), 0);
+
+export const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case Position.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case Position.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export const removeElem = (element) => {
+  if (element) {
+    element.remove();
+  }
+};
