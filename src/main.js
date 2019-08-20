@@ -1,44 +1,82 @@
-import {makeMenuTemplate} from './js/components/menu.js';
-import {makeSearchTemplate} from './js/components/search.js';
-import {makeFilterTemplate} from './js/components/filter.js';
-import {makeTaskTemplate} from './js/components/task.js';
-import {makeTaskEditTemplate} from './js/components/task-edit.js';
-import {makeLoadMoreTemplate} from './js/components/load-more-button.js';
-import {makeBoardContainer} from './js/components/board-container';
-import {makeBoardFilterTemplate} from './js/components/board-filters.js';
+import Menu from './js/components/menu.js';
+import Search from './js/components/search.js';
+import Filter from './js/components/filter.js';
+import Task from './js/components/task.js';
+import TaskEdit from './js/components/task-edit.js';
+import LoadMore from './js/components/load-more-button.js';
+import BoardContainer from './js/components/board-container';
+import BoardFilters from './js/components/board-filters.js';
+
 import {filters as mainFiltersData} from './js/data.js';
 import {tasks as mainTasksData} from './js/data.js';
+import {renderElement} from './js/utils.js';
 
 const RENDER_STEP = 8;
 const CURRENT_CARDS = 8;
 
-const renderTasks = (container, HTML) => {
-  container.insertAdjacentHTML(`beforeend`, HTML);
-};
+const mainMenu = new Menu();
+const mainSearch = new Search();
+const mainFilters = new Filter(mainFiltersData);
+const boardContent = new BoardContainer();
+const boardFilters = new BoardFilters();
+const loadMoreButton = new LoadMore();
 
-const renderComponent = (container, HTML, place) => {
-  container.insertAdjacentHTML(place, HTML);
-};
-
+const menuContainer = document.querySelector(`.main__control`);
 const mainContainer = document.querySelector(`.main`);
-const menuContainer = mainContainer.querySelector(`.main__control`);
 
-renderComponent(menuContainer, makeMenuTemplate(), `beforeend`);
-renderComponent(mainContainer, makeSearchTemplate(), `beforeend`);
-renderComponent(mainContainer, makeFilterTemplate(mainFiltersData), `beforeend`);
-renderComponent(mainContainer, makeBoardContainer(), `beforeend`);
+renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
+renderElement(mainContainer, mainSearch.getElement(), `beforeend`);
+renderElement(mainContainer, mainFilters.getElement(), `beforeend`);
+renderElement(mainContainer, boardContent.getElement(), `beforeend`);
 
-const boardFilterContainer = mainContainer.querySelector(`.board`);
-const tasksContainer = boardFilterContainer.querySelector(`.board__tasks`);
+const contentContainer = document.querySelector(`.board`);
+const tasksContainer = contentContainer.querySelector(`.board__tasks`);
 
-renderComponent(boardFilterContainer, makeBoardFilterTemplate(), `afterbegin`);
-renderTasks(tasksContainer, makeTaskEditTemplate(mainTasksData[0]));
+renderElement(contentContainer, boardFilters.getElement(), `afterbegin`);
+renderElement(contentContainer, loadMoreButton.getElement(), `beforeend`);
 
-for (let i = 1; i < 8; i++) {
-  renderTasks(tasksContainer, makeTaskTemplate(mainTasksData[i]));
-}
+const renderTask = (taskMock) => {
+  const task = new Task(taskMock);
+  const taskEdit = new TaskEdit(taskMock);
 
-renderComponent(boardFilterContainer, makeLoadMoreTemplate(), `beforeend`);
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  task.getElement()
+    .querySelector(`.card__btn--edit`)
+    .addEventListener(`click`, () => {
+      tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement()
+    .querySelector(`.card__form`)
+    .addEventListener(`submit`, (evt) => {
+      evt.preventDefault();
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  renderElement(tasksContainer, task.getElement(), `beforeend`);
+};
+
+mainTasksData.slice(0, CURRENT_CARDS).forEach((task) => {
+  renderTask(task);
+});
 
 const taskLoadState = {
   current: CURRENT_CARDS,
@@ -53,7 +91,7 @@ const onLoadBtnClick = () => {
   const step = current + taskLoadState.step;
 
   mainTasksData.slice(current, step).forEach((task) => {
-    renderTasks(tasksContainer, makeTaskTemplate(task));
+    renderTask(task);
   });
 
   if (step >= taskLoadState.max) {

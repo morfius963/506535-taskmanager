@@ -1,12 +1,10 @@
-export const randomArray = (arr) => {
-  const oldArray = arr.slice().sort(() => Math.random() - 0.5);
-  const newArray = [];
+export const getRandomNum = (min, max) => Math.floor(min + Math.random() * (max + 1 - min));
 
-  for (let i = 0; i <= Math.floor(Math.random() * 3); i++) {
-    newArray.push(oldArray[i]);
-  }
+export const getRandomArray = (arr, min, max) => {
+  const sortedArray = arr.slice().sort(() => Math.random() - 0.5);
+  const randomMax = getRandomNum(min, max);
 
-  return newArray;
+  return sortedArray.slice(min, randomMax);
 };
 
 export const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
@@ -23,3 +21,31 @@ export const getRepeatingFilterValue = (tasks) => tasks.reduce((acc, {repeatingD
 
 export const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
   (tags.size > 0 ? acc + 1 : acc), 0);
+
+export const POSITION = {
+  afterbegin: `afterbegin`,
+  beforeend: `beforeend`
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case POSITION.afterbegin:
+      container.prepend(element);
+      break;
+    case POSITION.beforeend:
+      container.append(element);
+      break;
+  }
+};
+
+export const removeElem = (element) => {
+  if (element) {
+    element.remove();
+  }
+};
