@@ -17,7 +17,7 @@ const CURRENT_CARDS = 8;
 const mainMenu = new Menu();
 const mainSearch = new Search();
 const mainFilters = new Filter(mainFiltersData);
-const boardContent = new BoardContainer(mainFiltersData);
+const boardContent = new BoardContainer(mainTasksData);
 const boardFilters = new BoardFilters();
 const loadMoreButton = new LoadMore();
 
