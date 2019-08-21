@@ -2,7 +2,8 @@ import {createElement} from '../utils.js';
 import {removeElem} from '../utils.js';
 
 class BoardContainer {
-  constructor() {
+  constructor(tasks) {
+    this._tasks = tasks;
     this._element = null;
   }
 
@@ -19,10 +20,18 @@ class BoardContainer {
     this._element = null;
   }
 
+  hasTasks() {
+    return this._tasks.filter(({isArchive}) => !isArchive).length !== 0;
+  }
+
   getTemplate() {
     return `<section class="board container">
-      <div class="board__tasks">
-      </div>
+      ${this.hasTasks()
+    ? `<div class="board__tasks">
+      </div>`
+    : `<p class="board__no-tasks">
+        Congratulations, all tasks were completed! To create a new click on «add new task» button.
+      </p>`}
     </section>`;
   }
 }

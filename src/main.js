@@ -17,7 +17,7 @@ const CURRENT_CARDS = 8;
 const mainMenu = new Menu();
 const mainSearch = new Search();
 const mainFilters = new Filter(mainFiltersData);
-const boardContent = new BoardContainer();
+const boardContent = new BoardContainer(mainFiltersData);
 const boardFilters = new BoardFilters();
 const loadMoreButton = new LoadMore();
 
@@ -31,9 +31,6 @@ renderElement(mainContainer, boardContent.getElement(), `beforeend`);
 
 const contentContainer = document.querySelector(`.board`);
 const tasksContainer = contentContainer.querySelector(`.board__tasks`);
-
-renderElement(contentContainer, boardFilters.getElement(), `afterbegin`);
-renderElement(contentContainer, loadMoreButton.getElement(), `beforeend`);
 
 const renderTask = (taskMock) => {
   const task = new Task(taskMock);
@@ -74,9 +71,17 @@ const renderTask = (taskMock) => {
   renderElement(tasksContainer, task.getElement(), `beforeend`);
 };
 
-mainTasksData.slice(0, CURRENT_CARDS).forEach((task) => {
-  renderTask(task);
-});
+if (mainTasksData.lenght > 0) {
+  renderElement(contentContainer, boardFilters.getElement(), `afterbegin`);
+
+  mainTasksData.slice(0, CURRENT_CARDS).forEach((task) => {
+    renderTask(task);
+  });
+}
+
+if (mainTasksData.length > RENDER_STEP) {
+  renderElement(contentContainer, loadMoreButton.getElement(), `beforeend`);
+}
 
 const taskLoadState = {
   current: CURRENT_CARDS,
@@ -103,4 +108,6 @@ const onLoadBtnClick = () => {
   }
 };
 
-loadMoreBtn.addEventListener(`click`, onLoadBtnClick);
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener(`click`, onLoadBtnClick);
+}
