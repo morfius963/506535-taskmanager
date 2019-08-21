@@ -71,7 +71,7 @@ const renderTask = (taskMock) => {
   renderElement(tasksContainer, task.getElement(), `beforeend`);
 };
 
-if (mainTasksData.lenght > 0) {
+if (mainTasksData.length > 0) {
   renderElement(contentContainer, boardFilters.getElement(), `afterbegin`);
 
   mainTasksData.slice(0, CURRENT_CARDS).forEach((task) => {
