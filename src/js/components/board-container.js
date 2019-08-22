@@ -21,7 +21,7 @@ class BoardContainer {
   }
 
   hasTasks() {
-    return this._tasks.filter(({isArchive}) => !isArchive).length !== 0;
+    return this._tasks.some(({isArchive}) => !isArchive);
   }
 
   getTemplate() {
