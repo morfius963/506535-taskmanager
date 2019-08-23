@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 
-class BoardFilters extends AbstractComponent {
+class SortList extends AbstractComponent {
   getTemplate() {
     return `<div class="board__filter-list">
       <a href="#" class="board__filter">SORT BY DEFAULT</a>
@@ -10,4 +10,4 @@ class BoardFilters extends AbstractComponent {
   }
 }
 
-export default BoardFilters;
+export default SortList;

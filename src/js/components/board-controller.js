@@ -1,5 +1,5 @@
 import BoardContainer from './board-container';
-import BoardFilters from './board-filters.js';
+import SortList from './sort-list.js';
 import TaskList from './task-list.js';
 import LoadMore from './load-more-button.js';
 import Task from './task.js';
@@ -12,7 +12,7 @@ class BoardController {
     this._container = container;
     this._tasks = tasks;
     this._boardContainer = new BoardContainer();
-    this._boardFilters = new BoardFilters();
+    this._sortList = new SortList();
     this._taskList = new TaskList();
     this._loadMore = new LoadMore();
     this._noTasks = new NoTasks();
@@ -52,7 +52,7 @@ class BoardController {
       return;
     }
 
-    renderElement(this._boardContainer.getElement(), this._boardFilters.getElement(), `beforeend`);
+    renderElement(this._boardContainer.getElement(), this._sortList.getElement(), `beforeend`);
     renderElement(this._boardContainer.getElement(), this._taskList.getElement(), `beforeend`);
 
     this._tasks.slice(0, this._CURRENT_CARDS).forEach((taskItem) => {
