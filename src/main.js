@@ -6,6 +6,8 @@ import TaskEdit from './js/components/task-edit.js';
 import LoadMore from './js/components/load-more-button.js';
 import BoardContainer from './js/components/board-container';
 import BoardFilters from './js/components/board-filters.js';
+import NoTasks from './js/components/no-tasks.js';
+import TaskList from './js/components/task-list.js';
 
 import {filters as mainFiltersData} from './js/data.js';
 import {tasks as mainTasksData} from './js/data.js';
@@ -17,27 +19,16 @@ const CURRENT_CARDS = 8;
 const mainMenu = new Menu();
 const mainSearch = new Search();
 const mainFilters = new Filter(mainFiltersData);
-const boardContent = new BoardContainer();
+const boardContainer = new BoardContainer();
 const boardFilters = new BoardFilters();
 const loadMoreButton = new LoadMore();
-
-const menuContainer = document.querySelector(`.main__control`);
-const mainContainer = document.querySelector(`.main`);
-
-renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
-renderElement(mainContainer, mainSearch.getElement(), `beforeend`);
-renderElement(mainContainer, mainFilters.getElement(), `beforeend`);
-renderElement(mainContainer, boardContent.getElement(), `beforeend`);
-
-const contentContainer = document.querySelector(`.board`);
-const tasksContainer = contentContainer.querySelector(`.board__tasks`);
-
-renderElement(contentContainer, boardFilters.getElement(), `afterbegin`);
-renderElement(contentContainer, loadMoreButton.getElement(), `beforeend`);
+const noTasksMessage = new NoTasks();
+const tasksList = new TaskList();
 
 const renderTask = (taskMock) => {
   const task = new Task(taskMock);
   const taskEdit = new TaskEdit(taskMock);
+  const tasksContainer = document.querySelector(`.board__tasks`);
 
   const onEscKeyDown = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -74,9 +65,35 @@ const renderTask = (taskMock) => {
   renderElement(tasksContainer, task.getElement(), `beforeend`);
 };
 
-mainTasksData.slice(0, CURRENT_CARDS).forEach((task) => {
-  renderTask(task);
-});
+const menuContainer = document.querySelector(`.main__control`);
+const mainContainer = document.querySelector(`.main`);
+
+const renderMainComponents = () => {
+  renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
+  renderElement(mainContainer, mainSearch.getElement(), `beforeend`);
+  renderElement(mainContainer, mainFilters.getElement(), `beforeend`);
+  renderElement(mainContainer, boardContainer.getElement(), `beforeend`);
+
+  const tasksContentElem = document.querySelector(`.board`);
+
+  if (mainTasksData.length === 0) {
+    renderElement(tasksContentElem, noTasksMessage.getElement(), `beforeend`);
+    return;
+  }
+
+  renderElement(tasksContentElem, boardFilters.getElement(), `beforeend`);
+  renderElement(tasksContentElem, tasksList.getElement(), `beforeend`);
+
+  mainTasksData.slice(0, CURRENT_CARDS).forEach((task) => {
+    renderTask(task);
+  });
+
+  if (mainTasksData.length > RENDER_STEP) {
+    renderElement(tasksContentElem, loadMoreButton.getElement(), `beforeend`);
+  }
+};
+
+renderMainComponents();
 
 const taskLoadState = {
   current: CURRENT_CARDS,
@@ -103,4 +120,6 @@ const onLoadBtnClick = () => {
   }
 };
 
-loadMoreBtn.addEventListener(`click`, onLoadBtnClick);
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener(`click`, onLoadBtnClick);
+}

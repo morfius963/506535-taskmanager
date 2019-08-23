@@ -1,7 +1,7 @@
 import {createElement} from '../utils.js';
 import {removeElem} from '../utils.js';
 
-class BoardContainer {
+class TaskList {
   constructor() {
     this._element = null;
   }
@@ -20,8 +20,8 @@ class BoardContainer {
   }
 
   getTemplate() {
-    return `<section class="board container"></section>`;
+    return `<div class="board__tasks"></div>`;
   }
 }
 
-export default BoardContainer;
+export default TaskList;
