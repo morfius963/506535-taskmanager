@@ -1,24 +1,6 @@
-import {createElement} from '../utils.js';
-import {removeElem} from '../utils.js';
+import AbstractComponent from "./abstract-component.js";
 
-class Search {
-  constructor() {
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    removeElem(this._element);
-    this._element = null;
-  }
-
+class Search extends AbstractComponent {
   getTemplate() {
     return `<section class="main__search search container">
       <input
