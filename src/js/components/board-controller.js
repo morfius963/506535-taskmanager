@@ -16,6 +16,7 @@ class BoardController {
     this._taskList = new TaskList();
     this._loadMore = new LoadMore();
     this._noTasks = new NoTasks();
+    this._sortedTasks = tasks;
 
     this._bindedOnLoadBtnClick = this._onLoadBtnClick.bind(this);
 
@@ -58,6 +59,8 @@ class BoardController {
     this._tasks.slice(0, this._CURRENT_CARDS).forEach((taskItem) => {
       this._renderTask(taskItem);
     });
+
+    this._sortList.getElement().addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     if (this._tasks.length > this._RENDER_STEP) {
       renderElement(this._boardContainer.getElement(), this._loadMore.getElement(), `beforeend`);
@@ -106,11 +109,38 @@ class BoardController {
     renderElement(this._taskList.getElement(), task.getElement(), `beforeend`);
   }
 
+  _onSortLinkClick(evt) {
+    evt.preventDefault();
+
+    if (evt.target.tagName.toLowerCase() !== `a`) {
+      return;
+    }
+
+    this._taskList.getElement().innerHTML = ``;
+
+    switch (evt.target.dataset.sortType) {
+      case `date-up`:
+        const sortedByDateUpTasks = this._tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+        this._sortedTasks = sortedByDateUpTasks;
+        this._sortedTasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
+        break;
+      case `date-down`:
+        const sortedByDateDownTasks = this._tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+        this._sortedTasks = sortedByDateDownTasks;
+        this._sortedTasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
+        break;
+      case `default`:
+        this._tasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
+        this._sortedTasks = this._tasks.slice();
+        break;
+    }
+  }
+
   _onLoadBtnClick() {
     const current = this._taskLoadState.current;
     const step = current + this._taskLoadState.step;
 
-    this._tasks.slice(current, step).forEach((task) => {
+    this._sortedTasks.slice(current, step).forEach((task) => {
       this._renderTask(task);
     });
 
