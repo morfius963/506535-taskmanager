@@ -122,18 +122,17 @@ class BoardController {
       case `date-up`:
         const sortedByDateUpTasks = this._tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
         this._sortedTasks = sortedByDateUpTasks;
-        this._sortedTasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
         break;
       case `date-down`:
         const sortedByDateDownTasks = this._tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
         this._sortedTasks = sortedByDateDownTasks;
-        this._sortedTasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
         break;
       case `default`:
-        this._tasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
         this._sortedTasks = this._tasks.slice();
         break;
     }
+
+    this._sortedTasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
   }
 
   _onLoadBtnClick() {
