@@ -12,7 +12,7 @@ class BoardController {
     this._container = container;
     this._tasks = tasks;
     this._boardContainer = new BoardContainer();
-    this._sortList = new Sort();
+    this._sort = new Sort();
     this._taskList = new TaskList();
     this._loadMore = new LoadMore();
     this._noTasks = new NoTasks();
@@ -53,14 +53,14 @@ class BoardController {
       return;
     }
 
-    renderElement(this._boardContainer.getElement(), this._sortList.getElement(), `beforeend`);
+    renderElement(this._boardContainer.getElement(), this._sort.getElement(), `beforeend`);
     renderElement(this._boardContainer.getElement(), this._taskList.getElement(), `beforeend`);
 
     this._tasks.slice(0, this._CURRENT_CARDS).forEach((taskItem) => {
       this._renderTask(taskItem);
     });
 
-    this._sortList.getElement().addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+    this._sort.getElement().addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
 
     if (this._tasks.length > this._RENDER_STEP) {
       renderElement(this._boardContainer.getElement(), this._loadMore.getElement(), `beforeend`);
