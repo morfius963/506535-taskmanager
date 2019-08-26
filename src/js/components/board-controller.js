@@ -145,7 +145,7 @@ class BoardController {
 
     if (step >= this._taskLoadState.max) {
       this._loadMore.getElement().removeEventListener(`click`, this._bindedOnLoadBtnClick);
-      this._loadMore.getElement().classList.add(`visually-hidden`);
+      this._loadMore.removeElement();
       this._taskLoadState.current = this._taskLoadState.max;
     } else {
       this._taskLoadState.current = step;
