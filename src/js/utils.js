@@ -44,7 +44,7 @@ export const renderElement = (container, element, place) => {
   }
 };
 
-export const removeElem = (element) => {
+export const unrenderElement = (element) => {
   if (element) {
     element.remove();
   }

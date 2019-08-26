@@ -6,6 +6,7 @@ import Task from './task.js';
 import TaskEdit from './task-edit.js';
 import NoTasks from './no-tasks.js';
 import {renderElement} from '../utils.js';
+import {unrenderElement} from '../utils.js';
 
 class BoardController {
   constructor(container, tasks) {
@@ -145,6 +146,7 @@ class BoardController {
 
     if (step >= this._taskLoadState.max) {
       this._loadMore.getElement().removeEventListener(`click`, this._bindedOnLoadBtnClick);
+      unrenderElement(this._loadMore.getElement());
       this._loadMore.removeElement();
       this._taskLoadState.current = this._taskLoadState.max;
     } else {
