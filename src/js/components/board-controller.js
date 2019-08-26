@@ -1,5 +1,5 @@
 import BoardContainer from './board-container';
-import SortList from './sort-list.js';
+import Sort from './sort.js';
 import TaskList from './task-list.js';
 import LoadMore from './load-more-button.js';
 import Task from './task.js';
@@ -12,7 +12,7 @@ class BoardController {
     this._container = container;
     this._tasks = tasks;
     this._boardContainer = new BoardContainer();
-    this._sortList = new SortList();
+    this._sortList = new Sort();
     this._taskList = new TaskList();
     this._loadMore = new LoadMore();
     this._noTasks = new NoTasks();
