@@ -24,7 +24,8 @@ export const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
 
 export const POSITION = {
   afterbegin: `afterbegin`,
-  beforeend: `beforeend`
+  beforeend: `beforeend`,
+  afterend: `afterend`
 };
 
 export const createElement = (template) => {
@@ -40,6 +41,9 @@ export const renderElement = (container, element, place) => {
       break;
     case POSITION.beforeend:
       container.append(element);
+      break;
+    case POSITION.afterend:
+      container.after(element);
       break;
   }
 };
