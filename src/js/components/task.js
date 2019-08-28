@@ -1,13 +1,15 @@
 import AbstractComponent from "./abstract-component.js";
 
 class Task extends AbstractComponent {
-  constructor({description, dueDate, repeatingDays, tags, color}) {
+  constructor({description, dueDate, repeatingDays, tags, color, isArchive, isFavorite}) {
     super();
     this._description = description;
     this._dueDate = new Date(dueDate);
     this._repeatingDays = repeatingDays;
     this._tags = tags;
     this._color = color;
+    this._isArchive = isArchive;
+    this._isFavorite = isFavorite;
   }
 
   getTemplate() {
@@ -19,12 +21,14 @@ class Task extends AbstractComponent {
             <button type="button" class="card__btn card__btn--edit">
               edit
             </button>
-            <button type="button" class="card__btn card__btn--archive">
+            <button 
+              type="button" 
+              class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``}">
               archive
             </button>
             <button
               type="button"
-              class="card__btn card__btn--favorites card__btn--disabled"
+              class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``}"
             >
               favorites
             </button>

@@ -1,13 +1,17 @@
 import AbstractComponent from './abstract-component.js';
 
 class TaskEdit extends AbstractComponent {
-  constructor({description, dueDate, repeatingDays, tags, color}) {
+  constructor({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) {
     super();
     this._description = description;
     this._dueDate = new Date(dueDate);
     this._repeatingDays = repeatingDays;
     this._tags = tags;
     this._color = color;
+    this._isArchive = isArchive;
+    this._isFavorite = isFavorite;
+
+    this._getCurrentColor();
   }
 
   getTemplate() {
@@ -16,12 +20,14 @@ class TaskEdit extends AbstractComponent {
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
-            <button type="button" class="card__btn card__btn--archive">
+            <button 
+              type="button" 
+              class="card__btn card__btn--archive ${this._isArchive ? `card__btn--disabled` : ``}">
               archive
             </button>
             <button
               type="button"
-              class="card__btn card__btn--favorites card__btn--disabled"
+              class="card__btn card__btn--favorites ${this._isFavorite ? `card__btn--disabled` : ``}"
             >
               favorites
             </button>
@@ -187,6 +193,10 @@ class TaskEdit extends AbstractComponent {
         </div>
       </form>
     </article>`;
+  }
+
+  _getCurrentColor() {
+    Array.from(this.getElement().querySelectorAll(`input[name="color"]`)).find((input) => input.value === `${this._color}`).checked = true;
   }
 }
 
