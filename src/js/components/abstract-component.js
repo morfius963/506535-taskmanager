@@ -23,6 +23,16 @@ class AbstractComponent {
   getTemplate() {
     throw Error(`Abstract method not implemented`);
   }
+
+  _getDateView() {
+    return new Date(this._dueDate).toString() !== `Invalid Date`;
+  }
+
+  _makeFormattedDate(dateValue) {
+    const dateTs = dateValue ? dateValue : Date.now();
+    const date = new Date(dateTs);
+    return `${date.toDateString()} ${String(date.getHours()).padStart(2, `0`)}:${String(date.getMinutes()).padStart(2, `0`)}`;
+  }
 }
 
 export default AbstractComponent;
