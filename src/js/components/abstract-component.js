@@ -25,7 +25,7 @@ class AbstractComponent {
   }
 
   _getDateView() {
-    return new Date(this._dueDate).toString() !== `Invalid Date`;
+    return !!this._dueDate;
   }
 
   _makeFormattedDate(dateValue) {
