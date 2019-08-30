@@ -18,7 +18,7 @@ class TaskController {
 
   init() {
     const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
+      if (this._container.getElement().contains(this._taskEdit.getElement()) && (evt.key === `Escape` || evt.key === `Esc`)) {
         this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
