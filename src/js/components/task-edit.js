@@ -78,7 +78,7 @@ class TaskEdit extends AbstractComponent {
                       type="text"
                       placeholder=""
                       name="date"
-                      value="${this._getDateView() ? this._formattedDate : null}"
+                      value="${this._getDateView() ? this._formattedDate : ``}"
                     />
                   </label>
                 </fieldset>
@@ -243,7 +243,7 @@ class TaskEdit extends AbstractComponent {
         } else {
           dateContainer.classList.add(`visually-hidden`);
           dateStatus.textContent = `no`;
-          dateInput.value = null;
+          dateInput.value = ``;
         }
       });
   }
