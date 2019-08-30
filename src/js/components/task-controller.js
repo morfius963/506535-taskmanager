@@ -123,8 +123,6 @@ class TaskController {
       isArchive
     };
 
-    console.log(entry.tags);
-
     return entry;
   }
 
