@@ -103,9 +103,7 @@ class TaskController {
     const entry = {
       description: formData.get(`text`),
       color: formData.get(`color`),
-      tags: new Set([...this._taskEdit.getElement().querySelectorAll(`.card__hashtag-inner`)].map((tag) => (
-        tag.querySelector(`.card__hashtag-name`).textContent.trim().substring(1)
-      ))),
+      tags: new Set(formData.getAll(`hashtag`)),
       dueDate: formData.get(`date`) === `` ? `` : new Date(formData.get(`date`)),
       repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
         acc[it] = true;
