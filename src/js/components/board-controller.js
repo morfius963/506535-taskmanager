@@ -2,10 +2,10 @@ import BoardContainer from './board-container';
 import Sort from './sort.js';
 import TaskList from './task-list.js';
 import LoadMore from './load-more-button.js';
-import Task from './task.js';
-import TaskEdit from './task-edit.js';
 import NoTasks from './no-tasks.js';
+import TaskController from './task-controller';
 import {renderElement} from '../utils.js';
+import {unrenderElement} from '../utils.js';
 
 class BoardController {
   constructor(container, tasks) {
@@ -19,6 +19,10 @@ class BoardController {
     this._sortedTasks = tasks;
 
     this._bindedOnLoadBtnClick = this._onLoadBtnClick.bind(this);
+
+    this._subscriptions = [];
+    this._onChangeView = this._onChangeView.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._RENDER_STEP = 8;
     this._CURRENT_CARDS = 8;
@@ -68,45 +72,38 @@ class BoardController {
     }
   }
 
-  _renderTask(taskMock) {
-    const task = new Task(taskMock);
-    const taskEdit = new TaskEdit(taskMock);
+  _renderBoard(tasks) {
+    unrenderElement(this._taskList.getElement());
+    this._taskList.removeElement();
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._taskList.getElement().replaceChild(task.getElement(), taskEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
+    renderElement(this._sort.getElement(), this._taskList.getElement(), `afterend`);
+    tasks.forEach((taskMock) => this._renderTask(taskMock));
+  }
 
-    task.getElement()
-      .querySelector(`.card__btn--edit`)
-      .addEventListener(`click`, () => {
-        this._taskList.getElement().replaceChild(taskEdit.getElement(), task.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+  _replaceOldTask(newTaskMock) {
+    const oldTaskIndex = this._sortedTasks.findIndex((it) => it === newTaskMock);
+    const oldTask = this._taskList.getElement().children[oldTaskIndex];
 
-    taskEdit.getElement()
-      .querySelector(`textarea`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
+    this._renderTask(newTaskMock);
 
-    taskEdit.getElement()
-      .querySelector(`textarea`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+    const changedTask = this._taskList.getElement().children[this._taskList.getElement().children.length - 1];
 
-    taskEdit.getElement()
-      .querySelector(`.card__form`)
-      .addEventListener(`submit`, (evt) => {
-        evt.preventDefault();
-        this._taskList.getElement().replaceChild(task.getElement(), taskEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
+    oldTask.replaceWith(changedTask);
+  }
 
-    renderElement(this._taskList.getElement(), task.getElement(), `beforeend`);
+  _renderTask(task) {
+    const taskController = new TaskController(this._taskList, task, this._onDataChange, this._onChangeView);
+    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
+  }
+
+  _onDataChange(newData, oldData) {
+    this._tasks[this._tasks.findIndex((it) => it === oldData)] = newData;
+    this._sortedTasks[this._sortedTasks.findIndex((it) => it === oldData)] = newData;
+    this._replaceOldTask(newData);
+  }
+
+  _onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
   }
 
   _onSortLinkClick(evt) {
@@ -115,8 +112,6 @@ class BoardController {
     if (evt.target.tagName.toLowerCase() !== `a`) {
       return;
     }
-
-    this._taskList.getElement().innerHTML = ``;
 
     switch (evt.target.dataset.sortType) {
       case `date-up`:
@@ -128,11 +123,11 @@ class BoardController {
         this._sortedTasks = sortedByDateDownTasks;
         break;
       case `default`:
-        this._sortedTasks = this._tasks.slice();
+        this._sortedTasks = this._tasks;
         break;
     }
 
-    this._sortedTasks.slice(0, this._taskLoadState.current).forEach((taskMock) => this._renderTask(taskMock));
+    this._renderBoard(this._sortedTasks.slice(0, this._taskLoadState.current));
   }
 
   _onLoadBtnClick() {
@@ -145,6 +140,7 @@ class BoardController {
 
     if (step >= this._taskLoadState.max) {
       this._loadMore.getElement().removeEventListener(`click`, this._bindedOnLoadBtnClick);
+      unrenderElement(this._loadMore.getElement());
       this._loadMore.removeElement();
       this._taskLoadState.current = this._taskLoadState.max;
     } else {

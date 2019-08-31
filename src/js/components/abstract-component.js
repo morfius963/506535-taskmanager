@@ -1,5 +1,4 @@
 import {createElement} from '../utils.js';
-import {removeElem} from '../utils.js';
 
 class AbstractComponent {
   constructor() {
@@ -18,12 +17,21 @@ class AbstractComponent {
   }
 
   removeElement() {
-    removeElem(this._element);
     this._element = null;
   }
 
   getTemplate() {
     throw Error(`Abstract method not implemented`);
+  }
+
+  _getDateView() {
+    return !!this._dueDate;
+  }
+
+  _makeFormattedDate(dateValue) {
+    const dateTs = dateValue ? dateValue : Date.now();
+    const date = new Date(dateTs);
+    return `${date.toDateString()} ${String(date.getHours()).padStart(2, `0`)}:${String(date.getMinutes()).padStart(2, `0`)}`;
   }
 }
 
