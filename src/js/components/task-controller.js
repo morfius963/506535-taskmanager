@@ -19,7 +19,8 @@ class TaskController {
   init() {
     const onEscKeyDown = (evt) => {
       if (this._container.getElement().contains(this._taskEdit.getElement()) && (evt.key === `Escape` || evt.key === `Esc`)) {
-        this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+        this._onChangeView();
+
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -126,6 +127,7 @@ class TaskController {
 
   setDefaultView() {
     if (this._container.getElement().contains(this._taskEdit.getElement())) {
+      this._taskEdit.resetForm();
       this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
     }
   }

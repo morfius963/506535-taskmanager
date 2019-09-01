@@ -10,6 +10,7 @@ class TaskEdit extends AbstractComponent {
     this._color = color;
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
+    this._changedColor = color;
 
     this._formattedDate = this._makeFormattedDate(dueDate);
 
@@ -21,17 +22,16 @@ class TaskEdit extends AbstractComponent {
     this._deleteHashtags();
   }
 
-  get color() {
-    return this._color;
+  get changedColor() {
+    return this._changedColor;
   }
 
-  set color(value) {
-    this._color = value;
+  set changedColor(value) {
+    this._changedColor = value;
   }
 
   getTemplate() {
-    return `<article class="card card--edit card--${this._color} ${Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day])
-      ? `card--repeat` : ``}">
+    return `<article class="card card--edit card--${this._color} ${this._isRepeating() ? `card--repeat` : ``}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -210,6 +210,56 @@ class TaskEdit extends AbstractComponent {
     </article>`;
   }
 
+  _isRepeating() {
+    return Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]);
+  }
+
+  resetForm() {
+    const currentColor = Array.from(this.getElement()
+      .querySelectorAll(`input[name="color"]`))
+      .find((input) => input.checked).value;
+
+    this.getElement().querySelector(`.card__form`).reset();
+    this.getElement().classList.remove(`card--${currentColor}`);
+    this.getElement().classList.add(`card--${this._color}`);
+
+    this._resetValue(this._isArchive, this.getElement().querySelector(`.card__btn--archive`), `card__btn--disabled`);
+    this._resetValue(this._isFavorite, this.getElement().querySelector(`.card__btn--favorites`), `card__btn--disabled`);
+
+    this.getElement().querySelector(`.card__date-status`).textContent = this._getDateView() ? `yes` : `no`;
+    this._resetValue(!this._getDateView(), this.getElement().querySelector(`.card__date-deadline`), `visually-hidden`);
+
+    this.getElement().querySelector(`.card__repeat-status`).textContent = this._hasRepeatingDays() ? `yes` : `no`;
+    this._resetValue(!this._hasRepeatingDays(), this.getElement().querySelector(`.card__repeat-days`), `visually-hidden`);
+
+    this.getElement().querySelector(`.card__hashtag-list`).innerHTML = ``;
+    this.getElement().querySelector(`.card__hashtag-list`).insertAdjacentHTML(`beforeend`, `${[...this._tags].map((tag) => `<span class="card__hashtag-inner">
+      <input
+        type="hidden"
+        name="hashtag"
+        value="${tag}"
+        class="card__hashtag-hidden-input"
+      />
+      <p class="card__hashtag-name">
+        #${tag}
+      </p>
+      <button type="button" class="card__hashtag-delete">
+        delete
+      </button>
+    </span>`).join(``)}`);
+
+    this._resetValue(this._isRepeating(), this.getElement(), `card--repeat`);
+    this._setCurrentColor();
+  }
+
+  _resetValue(value, elem, cls) {
+    if (!value && elem.classList.contains(cls)) {
+      elem.classList.remove(cls);
+    } else if (value && !elem.classList.contains(cls)) {
+      elem.classList.add(cls);
+    }
+  }
+
   _hasRepeatingDays() {
     return Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]);
   }
@@ -277,9 +327,9 @@ class TaskEdit extends AbstractComponent {
       .forEach((colorInput) => {
         colorInput.addEventListener(`click`, (evt) => {
           const newColor = evt.currentTarget.value;
-          this.getElement().classList.remove(`card--${this.color}`);
-          this.color = newColor;
-          this.getElement().classList.add(`card--${this.color}`);
+          this.getElement().classList.remove(`card--${this.changedColor}`);
+          this.changedColor = newColor;
+          this.getElement().classList.add(`card--${this.changedColor}`);
         });
       });
   }
