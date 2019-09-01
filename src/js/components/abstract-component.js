@@ -1,4 +1,5 @@
 import {createElement} from '../utils.js';
+import moment from 'moment';
 
 class AbstractComponent {
   constructor() {
@@ -30,8 +31,7 @@ class AbstractComponent {
 
   _makeFormattedDate(dateValue) {
     const dateTs = dateValue ? dateValue : Date.now();
-    const date = new Date(dateTs);
-    return `${date.toDateString()} ${String(date.getHours()).padStart(2, `0`)}:${String(date.getMinutes()).padStart(2, `0`)}`;
+    return moment(dateTs).format(`DD MMMM, YYYY`);
   }
 }
 
