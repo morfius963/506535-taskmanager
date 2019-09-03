@@ -25,13 +25,13 @@ const getTaskData = () => ({
   ][Math.floor(Math.random() * 3)],
   dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   repeatingDays: {
-    'Mo': Boolean(Math.round(Math.random())),
-    'Tu': false,
-    'We': false,
-    'Th': Boolean(Math.round(Math.random())),
-    'Fr': false,
-    'Sa': false,
-    'Su': false
+    'mo': Boolean(Math.round(Math.random())),
+    'tu': false,
+    'we': false,
+    'th': Boolean(Math.round(Math.random())),
+    'fr': false,
+    'sa': false,
+    'su': false
   },
   tags: new Set(getRandomArray([
     `homework`,

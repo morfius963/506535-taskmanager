@@ -142,6 +142,7 @@ class TaskEdit extends AbstractComponent {
                   class="card__color-input card__color-input--black visually-hidden"
                   name="color"
                   value="black"
+                  checked
                 />
                 <label
                   for="color-black-4"
@@ -154,7 +155,6 @@ class TaskEdit extends AbstractComponent {
                   class="card__color-input card__color-input--yellow visually-hidden"
                   name="color"
                   value="yellow"
-                  checked
                 />
                 <label
                   for="color-yellow-4"
@@ -227,6 +227,7 @@ class TaskEdit extends AbstractComponent {
     this._resetValue(this._isFavorite, this.getElement().querySelector(`.card__btn--favorites`), `card__btn--disabled`);
 
     this.getElement().querySelector(`.card__date-status`).textContent = this._getDateView() ? `yes` : `no`;
+    this.getElement().querySelector(`.card__date.form-control`).value = `${this._getDateView() ? this._formattedDate : ``}`;
     this._resetValue(!this._getDateView(), this.getElement().querySelector(`.card__date-deadline`), `visually-hidden`);
 
     this.getElement().querySelector(`.card__repeat-status`).textContent = this._hasRepeatingDays() ? `yes` : `no`;
@@ -271,10 +272,11 @@ class TaskEdit extends AbstractComponent {
   }
 
   _setCurrentColor() {
-    Array.from(this.getElement()
-      .querySelectorAll(`input[name="color"]`))
-      .find((input) => input.value === `${this._color}`)
-      .checked = true;
+    const foundColor = Array.from(this.getElement().querySelectorAll(`input[name="color"]`))
+      .find((input) => input.value === `${this._color}`);
+    if (foundColor) {
+      foundColor.checked = true;
+    }
   }
 
   _toggleDateInput() {
@@ -338,7 +340,7 @@ class TaskEdit extends AbstractComponent {
     this.getElement()
       .querySelector(`.card__hashtag-input`)
       .addEventListener(`keydown`, (evt) => {
-        if (evt.key === `Enter`) {
+        if (evt.key === `Enter` || evt.code === `Space`) {
           evt.preventDefault();
 
           this.getElement().querySelector(`.card__hashtag-list`).insertAdjacentHTML(`beforeend`, `<span class="card__hashtag-inner">

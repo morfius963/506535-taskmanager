@@ -1,12 +1,17 @@
-import Task from './task.js';
-import TaskEdit from './task-edit.js';
-import {renderElement} from '../utils.js';
+import Task from '../components/task.js';
+import TaskEdit from '../components/task-edit.js';
+import {renderElement, unrenderElement} from '../utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
+export const Mode = {
+  ADDING: `adding`,
+  DEFAULT: `default`,
+};
+
 class TaskController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, data, mode, onChangeView, onDataChange) {
     this._container = container;
     this._data = data;
     this._onDataChange = onDataChange;
@@ -16,22 +21,34 @@ class TaskController {
 
     this._updatedBooleanData = this._buildNewData();
 
-    this.init();
+    this.init(mode);
   }
 
-  init() {
+  init(mode) {
+    let renderPosition = `beforeend`;
+    let currentView = this._taskView;
+
+    if (mode === Mode.ADDING) {
+      renderPosition = `afterbegin`;
+      currentView = this._taskEdit;
+    }
+
     flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
       allowInput: true,
       defaultDate: this._data.dueDate,
+      altFormat: `d F, Y`,
+      dateFormat: `d F, Y`,
     });
 
     const onEscKeyDown = (evt) => {
-      if (this._container.getElement().contains(this._taskEdit.getElement()) && (evt.key === `Escape` || evt.key === `Esc`)) {
-        this._onChangeView();
-
-        document.removeEventListener(`keydown`, onEscKeyDown);
+      if (evt.key === `Escape` || evt.key === `Esc`) {
+        if (this._container.contains(this._taskEdit.getElement())) {
+          this._onChangeView();
+        }
       }
+
+      document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
     this._taskView.getElement()
@@ -64,8 +81,7 @@ class TaskController {
       .querySelector(`.card__btn--edit`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-
-        this._container.getElement().replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
+        this._container.replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -73,6 +89,12 @@ class TaskController {
       .querySelector(`textarea`)
       .addEventListener(`focus`, () => {
         document.removeEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._taskEdit.getElement()
+      .querySelector(`.card__hashtag-input`)
+      .addEventListener(`blur`, () => {
+        document.addEventListener(`keydown`, onEscKeyDown);
       });
 
     this._taskEdit.getElement()
@@ -87,12 +109,25 @@ class TaskController {
         evt.preventDefault();
 
         const entry = this._buildNewData();
-        this._onDataChange(entry, this._data);
-
+        this._onDataChange(entry, mode === Mode.DEFAULT ? this._data : null);
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
-    renderElement(this._container.getElement(), this._taskView.getElement(), `beforeend`);
+    this._taskEdit.getElement().querySelector(`.card__delete`)
+      .addEventListener(`click`, () => {
+
+        if (mode === Mode.ADDING) {
+          unrenderElement(this._taskEdit.getElement());
+          this._taskEdit.removeElement();
+          this._onDataChange(null, null);
+
+        } else if (mode === Mode.DEFAULT) {
+          this._onDataChange(null, this._data);
+        }
+
+      });
+
+    renderElement(this._container, currentView.getElement(), renderPosition);
   }
 
   _setBooleanValue(evt, value) {
@@ -135,9 +170,9 @@ class TaskController {
   }
 
   setDefaultView() {
-    if (this._container.getElement().contains(this._taskEdit.getElement())) {
+    if (this._container.contains(this._taskEdit.getElement())) {
       this._taskEdit.resetForm();
-      this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+      this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
     }
   }
 }
