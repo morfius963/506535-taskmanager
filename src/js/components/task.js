@@ -1,4 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
+import {MS_IN_DAY} from '../utils.js';
+import moment from 'moment';
 
 class Task extends AbstractComponent {
   constructor({description, dueDate, repeatingDays, tags, color, isArchive, isFavorite}) {
@@ -10,13 +12,14 @@ class Task extends AbstractComponent {
     this._color = color;
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
+    this._isDeadLine = moment(new Date(Date.now() - MS_IN_DAY)).isAfter(dueDate);
 
     this._formattedDate = this._makeFormattedDate(dueDate);
   }
 
   getTemplate() {
     return `<article class="card card--${this._color} ${Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day])
-      ? `card--repeat` : ``}">
+      ? `card--repeat` : ``} ${this._isDeadLine ? `card--deadline` : ``}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">

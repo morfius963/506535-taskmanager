@@ -1,4 +1,6 @@
 import AbstractComponent from './abstract-component.js';
+import {MS_IN_DAY} from '../utils.js';
+import moment from 'moment';
 
 class TaskEdit extends AbstractComponent {
   constructor({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) {
@@ -11,6 +13,7 @@ class TaskEdit extends AbstractComponent {
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
     this._changedColor = color;
+    this._isDeadLine = moment(new Date(Date.now() - MS_IN_DAY)).isAfter(dueDate);
 
     this._formattedDate = this._makeFormattedDate(dueDate);
 
@@ -31,7 +34,7 @@ class TaskEdit extends AbstractComponent {
   }
 
   getTemplate() {
-    return `<article class="card card--edit card--${this._color} ${this._isRepeating() ? `card--repeat` : ``}">
+    return `<article class="card card--edit card--${this._color} ${this._hasRepeatingDays() ? `card--repeat` : ``} ${this._isDeadLine ? `card--deadline` : ``}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -210,10 +213,6 @@ class TaskEdit extends AbstractComponent {
     </article>`;
   }
 
-  _isRepeating() {
-    return Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day]);
-  }
-
   resetForm() {
     const currentColor = Array.from(this.getElement()
       .querySelectorAll(`input[name="color"]`))
@@ -249,7 +248,7 @@ class TaskEdit extends AbstractComponent {
       </button>
     </span>`).join(``)}`);
 
-    this._resetValue(this._isRepeating(), this.getElement(), `card--repeat`);
+    this._resetValue(this._hasRepeatingDays(), this.getElement(), `card--repeat`);
     this._setCurrentColor();
   }
 
