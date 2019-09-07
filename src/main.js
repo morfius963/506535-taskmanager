@@ -24,6 +24,10 @@ const mainSearch = new Search();
 const mainFilters = new Filter(mainFiltersData);
 const mainStatistics = new Statistics();
 
+const onDataChange = (tasks) => {
+  taskMocks = tasks;
+};
+
 mainStatistics.getElement().classList.add(`visually-hidden`);
 
 renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
@@ -31,13 +35,13 @@ renderElement(mainContainer, mainSearch.getElement(), `beforeend`);
 renderElement(mainContainer, mainFilters.getElement(), `beforeend`);
 renderElement(mainContainer, mainStatistics.getElement(), `beforeend`);
 
-const boardController = new BoardController(mainContainer);
+const boardController = new BoardController(mainContainer, onDataChange);
 const onSearchBackButtonClick = () => {
-  mainStatistics.getElement().classList.add(`visually-hidden`);
+  mainStatistics.hide();
   searchController.hide();
   boardController.show(taskMocks);
 };
-const searchController = new SearchController(mainContainer, mainSearch, onSearchBackButtonClick);
+const searchController = new SearchController(mainContainer, mainSearch, onSearchBackButtonClick, onDataChange);
 
 boardController.show(taskMocks);
 
@@ -60,15 +64,17 @@ mainMenu.getElement().addEventListener(`change`, (evt) => {
       mainStatistics.show();
       break;
     case IdValues.NEW_TASK:
-      boardController.createTask();
+      mainStatistics.hide();
+      searchController.hide();
       boardController.show(taskMocks);
+      boardController.createTask();
       mainMenu.getElement().querySelector(`#${IdValues.TASKS}`).checked = true;
       break;
   }
 });
 
 mainSearch.getElement().addEventListener(`click`, () => {
-  mainStatistics.getElement().classList.add(`visually-hidden`);
+  mainStatistics.hide();
   boardController.hide();
   searchController.show(taskMocks);
 });
