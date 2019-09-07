@@ -23,7 +23,7 @@ const getTaskData = () => ({
     `Сделать домашку`,
     `Пройти интенсив на соточку`
   ][Math.floor(Math.random() * 3)],
-  dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
+  dueDate: new Date(Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000),
   repeatingDays: {
     'mo': Boolean(Math.round(Math.random())),
     'tu': false,
@@ -53,7 +53,7 @@ const getTaskData = () => ({
   isArchive: Boolean(Math.round(Math.random()))
 });
 
-const getFilterData = (filterName) => ({
+export const getFilterData = (filterName, tasks) => ({
   title: filterName,
   count: getFilterCount(filterName, tasks)
 });
@@ -76,4 +76,4 @@ const getFilterCount = (name, taskList) => {
 export const tasks = new Array(MOCK_DATA_COUNT.TASK.COUNT).fill(``).map(getTaskData);
 
 // сткуртура даних усіх фільтрів
-export const filters = filterNames.map(getFilterData);
+export const filters = filterNames.map((filter) => getFilterData(filter, tasks));
