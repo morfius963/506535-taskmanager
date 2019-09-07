@@ -10,10 +10,11 @@ import {unrenderElement} from '../utils.js';
 const TASKS_IN_ROW = 8;
 
 class BoardController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
     this._tasks = [];
     this._sortedTasks = [];
+    this._onDataChangeMain = onDataChange;
 
     this._showedTasks = TASKS_IN_ROW;
 
@@ -55,6 +56,7 @@ class BoardController {
   }
 
   hide() {
+    this._taskListController.onChangeView();
     this._boardContainer.getElement().classList.add(`visually-hidden`);
   }
 
@@ -85,7 +87,7 @@ class BoardController {
       this._loadMore.getElement().addEventListener(`click`, this._bindedOnLoadBtnClick);
     }
 
-    this._taskListController.setTasks(this._sortedTasks);
+    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasks), this._sortedTasks.slice(this._showedTasks));
   }
 
   _setTasks(tasks) {
@@ -100,6 +102,7 @@ class BoardController {
     this._tasks = tasks;
     this._sortedTasks = tasks;
 
+    this._onDataChangeMain(tasks);
     this._renderBoard();
   }
 
@@ -124,7 +127,7 @@ class BoardController {
         break;
     }
 
-    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasks));
+    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasks), this._sortedTasks.slice(this._showedTasks));
   }
 
   _onLoadBtnClick() {

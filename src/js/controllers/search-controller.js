@@ -1,24 +1,26 @@
 import SearchResult from '../components/search-result.js';
 import SearchResultGroup from '../components/search-result-group.js';
 import SearchResultInfo from "../components/search-result-info.js";
+import SearchNoResult from "../components/search-no-result.js";
 import TaskListController from "./task-list-controller.js";
 import {renderElement, unrenderElement} from '../utils.js';
 
 class SearchController {
-  constructor(container, search, onBackButtonClick) {
+  constructor(container, search, onBackButtonClick, onDataChangePage) {
     this._container = container;
     this._search = search;
     this._onBackButtonClick = onBackButtonClick;
+    this._onDataChangePage = onDataChangePage;
 
     this._tasks = [];
 
     this._searchResult = new SearchResult();
     this._searchResultGroup = new SearchResultGroup();
     this._searchResultInfo = new SearchResultInfo({});
+    this._searchNoResult = new SearchNoResult();
     this._taskListController = new TaskListController(
         this._searchResultGroup.getElement().querySelector(`.result__cards`),
-        this._onDataChange.bind(this),
-        () => 8
+        this._onDataChange.bind(this)
     );
 
     this._init();
@@ -56,7 +58,7 @@ class SearchController {
     this._tasks = tasks;
 
     if (this._searchResult.getElement().classList.contains(`visually-hidden`)) {
-      this._showSearchResult(``, this._tasks);
+      this._showSearchResult(``, tasks);
       this._searchResult.getElement().classList.remove(`visually-hidden`);
     }
   }
@@ -67,15 +69,26 @@ class SearchController {
       this._searchResultInfo.removeElement();
     }
 
-    this._searchResultInfo = new SearchResultInfo({title: text, count: tasks.length});
+    if (tasks.length === 0) {
+      this._searchResultGroup.getElement().querySelector(`.result__cards`).innerHTML = ``;
+      unrenderElement(this._searchResultInfo.getElement());
+      this._searchResultInfo.removeElement();
+      renderElement(this._searchResultGroup.getElement(), this._searchNoResult.getElement(), `afterbegin`);
 
-    renderElement(this._searchResultGroup.getElement(), this._searchResultInfo.getElement(), `afterbegin`);
+    } else {
+      unrenderElement(this._searchNoResult.getElement());
+      this._searchNoResult.removeElement();
 
-    this._taskListController.setTasks(tasks);
+      this._searchResultInfo = new SearchResultInfo({title: text, count: tasks.length});
+      renderElement(this._searchResultGroup.getElement(), this._searchResultInfo.getElement(), `afterbegin`);
+      this._taskListController.setTasks(tasks.slice(0, tasks.length), tasks.slice(tasks.length));
+    }
   }
 
   _onDataChange(tasks) {
     this._tasks = tasks;
+    this._onDataChangePage(tasks);
+    this._searchResultInfo.getElement().querySelector(`.result__count`).textContent = tasks.length;
   }
 }
 
