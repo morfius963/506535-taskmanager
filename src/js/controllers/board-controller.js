@@ -1,11 +1,11 @@
-import BoardContainer from '../components/board-container';
-import Sort from '../components/sort.js';
-import TaskList from '../components/task-list.js';
-import LoadMore from '../components/load-more-button.js';
-import NoTasks from '../components/no-tasks.js';
-import TaskListController from './task-list-controller.js';
-import {renderElement} from '../utils';
-import {unrenderElement} from '../utils.js';
+import BoardContainer from "../components/board-container";
+import Sort from "../components/sort.js";
+import TaskList from "../components/task-list.js";
+import LoadMore from "../components/load-more-button.js";
+import NoTasks from "../components/no-tasks.js";
+import TaskListController from "./task-list-controller.js";
+import {renderElement} from "../utils";
+import {unrenderElement} from "../utils.js";
 
 const TASKS_IN_ROW = 8;
 
@@ -16,7 +16,7 @@ class BoardController {
     this._sortedTasks = [];
     this._onDataChangeMain = onDataChange;
 
-    this._showedTasks = TASKS_IN_ROW;
+    this._showedTasksCount = TASKS_IN_ROW;
 
     this._boardContainer = new BoardContainer();
     this._sort = new Sort();
@@ -44,7 +44,7 @@ class BoardController {
   }
 
   getShowedTasks() {
-    return this._showedTasks;
+    return this._showedTasksCount;
   }
 
   show(tasks) {
@@ -82,18 +82,18 @@ class BoardController {
 
     renderElement(this._boardContainer.getElement(), this._taskList.getElement(), `beforeend`);
 
-    if (this._tasks.length > TASKS_IN_ROW && this._showedTasks < this._tasks.length) {
+    if (this._tasks.length > TASKS_IN_ROW && this._showedTasksCount < this._tasks.length) {
       renderElement(this._boardContainer.getElement(), this._loadMore.getElement(), `beforeend`);
       this._loadMore.getElement().addEventListener(`click`, this._bindedOnLoadBtnClick);
     }
 
-    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasks), this._sortedTasks.slice(this._showedTasks));
+    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasksCount), this._sortedTasks.slice(this._showedTasksCount));
   }
 
   _setTasks(tasks) {
     this._tasks = tasks;
     this._sortedTasks = tasks;
-    this._showedTasks = TASKS_IN_ROW;
+    this._showedTasksCount = TASKS_IN_ROW;
 
     this._renderBoard();
   }
@@ -127,17 +127,17 @@ class BoardController {
         break;
     }
 
-    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasks), this._sortedTasks.slice(this._showedTasks));
+    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasksCount), this._sortedTasks.slice(this._showedTasksCount));
   }
 
   _onLoadBtnClick() {
-    const step = this._showedTasks + TASKS_IN_ROW;
+    const step = this._showedTasksCount + TASKS_IN_ROW;
 
-    this._taskListController.addTasks(this._sortedTasks.slice(this._showedTasks, step));
+    this._taskListController.addTasks(this._sortedTasks.slice(this._showedTasksCount, step));
 
-    this._showedTasks = step;
+    this._showedTasksCount = step;
 
-    if (this._showedTasks >= this._tasks.length) {
+    if (this._showedTasksCount >= this._tasks.length) {
       this._loadMore.getElement().removeEventListener(`click`, this._bindedOnLoadBtnClick);
       unrenderElement(this._loadMore.getElement());
       this._loadMore.removeElement();

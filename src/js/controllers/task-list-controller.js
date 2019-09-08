@@ -1,6 +1,6 @@
-import TaskController, {Mode as TaskControllerMode} from './task-controller.js';
-import PageDataController from './page-data-controller.js';
-import {unrenderElement} from '../utils.js';
+import TaskController, {Mode as TaskControllerMode} from "./task-controller.js";
+import PageDataController from "./page-data-controller.js";
+import {unrenderElement} from "../utils.js";
 
 class TaskListController {
   constructor(container, onDataChange) {
@@ -8,7 +8,7 @@ class TaskListController {
     this._onDataChangeMain = onDataChange;
 
     this._creatingTask = null;
-    this._showedTasks = null;
+    this._showedTasksCount = null;
     this._subscriptions = [];
     this._tasks = [];
     this._sortedTasks = [];
@@ -24,7 +24,7 @@ class TaskListController {
     this._sortedTasks = [...viewedTasks, ...unViewedTasks];
     this._subscriptions = [];
     this._creatingTask = null;
-    this._showedTasks = viewedTasks.length;
+    this._showedTasksCount = viewedTasks.length;
 
     this._container.innerHTML = ``;
     viewedTasks.forEach((task) => this._renderTask(task));
@@ -32,7 +32,7 @@ class TaskListController {
 
   addTasks(tasks) {
     tasks.forEach((task) => this._renderTask(task));
-    this._showedTasks += tasks.length;
+    this._showedTasksCount += tasks.length;
   }
 
   createTask() {
@@ -73,7 +73,7 @@ class TaskListController {
   onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
 
-    if (this._container.children.length > this._showedTasks) {
+    if (this._container.children.length > this._showedTasksCount) {
       unrenderElement(this._container.children[0]);
       this._creatingTask = null;
     }
@@ -103,7 +103,7 @@ class TaskListController {
     }
 
     this._creatingTask = null;
-    this._pageDataController.updatePage(this._sortedTasks);
+    this._pageDataController.updateFilter(this._sortedTasks);
     this.setTasks(this._sortedTasks);
     this._onDataChangeMain(this._sortedTasks);
   }

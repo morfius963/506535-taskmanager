@@ -1,5 +1,5 @@
-import {getFilterData} from '../data.js';
-import {unrenderElement, renderElement} from '../utils.js';
+import {getFilterData} from "../data.js";
+import {unrenderElement, renderElement} from "../utils.js";
 import Filters from "../components/filter.js";
 
 class PageDataController {
@@ -8,7 +8,7 @@ class PageDataController {
     this._filterSibling = document.querySelector(`.main__search`);
   }
 
-  updatePage(tasks) {
+  updateFilter(tasks) {
     const filterElem = document.querySelector(`.main__filter`);
     const newFilterData = this._filterNames.map((filter) => getFilterData(filter, tasks));
     const newFilterComponent = new Filters(newFilterData);

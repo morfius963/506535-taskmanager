@@ -1,9 +1,9 @@
-import SearchResult from '../components/search-result.js';
-import SearchResultGroup from '../components/search-result-group.js';
+import SearchResult from "../components/search-result.js";
+import SearchResultGroup from "../components/search-result-group.js";
 import SearchResultInfo from "../components/search-result-info.js";
 import SearchNoResult from "../components/search-no-result.js";
 import TaskListController from "./task-list-controller.js";
-import {renderElement, unrenderElement} from '../utils.js';
+import {renderElement, unrenderElement} from "../utils.js";
 
 class SearchController {
   constructor(container, search, onBackButtonClick, onDataChangePage) {
@@ -88,7 +88,7 @@ class SearchController {
   _onDataChange(tasks) {
     this._tasks = tasks;
     this._onDataChangePage(tasks);
-    this._searchResultInfo.getElement().querySelector(`.result__count`).textContent = tasks.length;
+    this._searchResultInfo.updateCount(tasks.length);
   }
 }
 

@@ -1,9 +1,9 @@
-import Task from '../components/task.js';
-import TaskEdit from '../components/task-edit.js';
-import {renderElement, unrenderElement} from '../utils.js';
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
-import 'flatpickr/dist/themes/light.css';
+import Task from "../components/task.js";
+import TaskEdit from "../components/task-edit.js";
+import {renderElement, unrenderElement} from "../utils.js";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/light.css";
 
 export const Mode = {
   ADDING: `adding`,

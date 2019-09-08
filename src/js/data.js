@@ -1,9 +1,9 @@
-import {getRandomArray} from './utils.js';
-import {getOverdueFilterCount} from './utils.js';
-import {getTodayFilterCount} from './utils.js';
-import {getBooleanFilterCount} from './utils.js';
-import {getRepeatingFilterValue} from './utils.js';
-import {getTagsFilterCount} from './utils.js';
+import {getRandomArray} from "./utils.js";
+import {getOverdueFilterCount} from "./utils.js";
+import {getTodayFilterCount} from "./utils.js";
+import {getBooleanFilterCount} from "./utils.js";
+import {getRepeatingFilterValue} from "./utils.js";
+import {getTagsFilterCount} from "./utils.js";
 
 const MOCK_DATA_COUNT = {
   TAG: {

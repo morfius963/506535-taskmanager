@@ -13,6 +13,10 @@ class SearchResultInfo extends AbstractComponent {
       ${this._title}<span class="result__count">${this._count}</span>
     </h2>`;
   }
+
+  updateCount(count) {
+    this.getElement().querySelector(`.result__count`).textContent = count;
+  }
 }
 
 export default SearchResultInfo;

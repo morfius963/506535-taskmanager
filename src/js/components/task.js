@@ -1,6 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {MS_IN_DAY} from '../utils.js';
-import moment from 'moment';
+import moment from "moment";
 
 class Task extends AbstractComponent {
   constructor({description, dueDate, repeatingDays, tags, color, isArchive, isFavorite}) {
@@ -12,7 +11,7 @@ class Task extends AbstractComponent {
     this._color = color;
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
-    this._isDeadLine = moment(new Date(Date.now() - MS_IN_DAY)).isAfter(dueDate);
+    this._isDeadLine = moment(Date.now()).subtract(1, `days`).isAfter(dueDate);
 
     this._formattedDate = this._makeFormattedDate(dueDate);
   }
