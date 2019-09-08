@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const getRandomNum = (min, max) => Math.floor(min + Math.random() * (max + 1 - min));
 
 export const getRandomArray = (arr, min, max) => {
@@ -8,7 +10,7 @@ export const getRandomArray = (arr, min, max) => {
 };
 
 export const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
-  (Date.now() > dueDate ? acc + 1 : acc), 0);
+  (moment(Date.now()).subtract(1, `days`).isAfter(dueDate) ? acc + 1 : acc), 0);
 
 export const getTodayFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
   (new Date(dueDate).toDateString() === new Date(Date.now()).toDateString() ? acc + 1 : acc), 0);

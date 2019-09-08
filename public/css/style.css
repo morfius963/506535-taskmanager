@@ -763,6 +763,7 @@ body {
 .result__cards {
   display: flex;
   flex-wrap: wrap;
+  margin-right: -40px;
 }
 .result__empty {
   text-align: center;

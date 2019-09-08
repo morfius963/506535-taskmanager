@@ -1,9 +1,9 @@
-import {getRandomArray} from './utils.js';
-import {getOverdueFilterCount} from './utils.js';
-import {getTodayFilterCount} from './utils.js';
-import {getBooleanFilterCount} from './utils.js';
-import {getRepeatingFilterValue} from './utils.js';
-import {getTagsFilterCount} from './utils.js';
+import {getRandomArray} from "./utils.js";
+import {getOverdueFilterCount} from "./utils.js";
+import {getTodayFilterCount} from "./utils.js";
+import {getBooleanFilterCount} from "./utils.js";
+import {getRepeatingFilterValue} from "./utils.js";
+import {getTagsFilterCount} from "./utils.js";
 
 const MOCK_DATA_COUNT = {
   TAG: {
@@ -23,15 +23,15 @@ const getTaskData = () => ({
     `Сделать домашку`,
     `Пройти интенсив на соточку`
   ][Math.floor(Math.random() * 3)],
-  dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
+  dueDate: new Date(Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000),
   repeatingDays: {
-    'Mo': Boolean(Math.round(Math.random())),
-    'Tu': false,
-    'We': false,
-    'Th': Boolean(Math.round(Math.random())),
-    'Fr': false,
-    'Sa': false,
-    'Su': false
+    'mo': Boolean(Math.round(Math.random())),
+    'tu': false,
+    'we': false,
+    'th': Boolean(Math.round(Math.random())),
+    'fr': false,
+    'sa': false,
+    'su': false
   },
   tags: new Set(getRandomArray([
     `homework`,
@@ -53,7 +53,7 @@ const getTaskData = () => ({
   isArchive: Boolean(Math.round(Math.random()))
 });
 
-const getFilterData = (filterName) => ({
+export const getFilterData = (filterName, tasks) => ({
   title: filterName,
   count: getFilterCount(filterName, tasks)
 });
@@ -76,4 +76,4 @@ const getFilterCount = (name, taskList) => {
 export const tasks = new Array(MOCK_DATA_COUNT.TASK.COUNT).fill(``).map(getTaskData);
 
 // сткуртура даних усіх фільтрів
-export const filters = filterNames.map(getFilterData);
+export const filters = filterNames.map((filter) => getFilterData(filter, tasks));
