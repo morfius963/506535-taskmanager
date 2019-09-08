@@ -4,8 +4,7 @@ import TaskList from "../components/task-list.js";
 import LoadMore from "../components/load-more-button.js";
 import NoTasks from "../components/no-tasks.js";
 import TaskListController from "./task-list-controller.js";
-import {renderElement} from "../utils";
-import {unrenderElement} from "../utils.js";
+import {renderElement, unrenderElement, sortByValue} from "../utils";
 
 const TASKS_IN_ROW = 8;
 
@@ -13,7 +12,6 @@ class BoardController {
   constructor(container, onDataChange) {
     this._container = container;
     this._tasks = [];
-    this._sortedTasks = [];
     this._onDataChangeMain = onDataChange;
 
     this._showedTasksCount = TASKS_IN_ROW;
@@ -71,6 +69,8 @@ class BoardController {
   }
 
   _renderBoard() {
+    const sortedTasks = this._sortByCurrentSortValue(this._tasks);
+
     unrenderElement(this._loadMore.getElement());
     this._loadMore.removeElement();
 
@@ -87,12 +87,11 @@ class BoardController {
       this._loadMore.getElement().addEventListener(`click`, this._bindedOnLoadBtnClick);
     }
 
-    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasksCount), this._sortedTasks.slice(this._showedTasksCount));
+    this._taskListController.setTasks(sortedTasks.slice(0, this._showedTasksCount), sortedTasks.slice(this._showedTasksCount));
   }
 
   _setTasks(tasks) {
     this._tasks = tasks;
-    this._sortedTasks = tasks;
     this._showedTasksCount = TASKS_IN_ROW;
 
     this._renderBoard();
@@ -100,7 +99,6 @@ class BoardController {
 
   _onDataChange(tasks) {
     this._tasks = tasks;
-    this._sortedTasks = tasks;
 
     this._onDataChangeMain(tasks);
     this._renderBoard();
@@ -113,27 +111,30 @@ class BoardController {
       return;
     }
 
+    let sortedTasks = null;
+
     switch (evt.target.dataset.sortType) {
       case `date-up`:
-        const sortedByDateUpTasks = this._tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
-        this._sortedTasks = sortedByDateUpTasks;
+        sortedTasks = sortByValue(this._tasks, `up`);
         break;
       case `date-down`:
-        const sortedByDateDownTasks = this._tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
-        this._sortedTasks = sortedByDateDownTasks;
+        sortedTasks = sortByValue(this._tasks, `down`);
         break;
       case `default`:
-        this._sortedTasks = this._tasks;
+        sortedTasks = sortByValue(this._tasks, `default`);
         break;
     }
 
-    this._taskListController.setTasks(this._sortedTasks.slice(0, this._showedTasksCount), this._sortedTasks.slice(this._showedTasksCount));
+    this._sort.getElement().querySelectorAll(`.board__filter`).forEach((sortItem) => sortItem.classList.remove(`board__filter--active`));
+    evt.target.classList.add(`board__filter--active`);
+    this._taskListController.setTasks(sortedTasks.slice(0, this._showedTasksCount), sortedTasks.slice(this._showedTasksCount));
   }
 
   _onLoadBtnClick() {
     const step = this._showedTasksCount + TASKS_IN_ROW;
+    const sortedTasks = this._sortByCurrentSortValue(this._tasks);
 
-    this._taskListController.addTasks(this._sortedTasks.slice(this._showedTasksCount, step));
+    this._taskListController.addTasks(sortedTasks.slice(this._showedTasksCount, step));
 
     this._showedTasksCount = step;
 
@@ -142,6 +143,19 @@ class BoardController {
       unrenderElement(this._loadMore.getElement());
       this._loadMore.removeElement();
     }
+  }
+
+  _sortByCurrentSortValue(tasks) {
+    const current = Array.from(this._sort.getElement().querySelectorAll(`.board__filter`)).find((sortItem) => sortItem.classList.contains(`board__filter--active`)).dataset.sortType;
+
+    switch (current) {
+      case `date-up`:
+        return sortByValue(tasks, `up`);
+      case `date-down`:
+        return sortByValue(tasks, `down`);
+    }
+
+    return sortByValue(tasks, `default`);
   }
 }
 

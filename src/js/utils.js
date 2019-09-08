@@ -1,5 +1,23 @@
 import moment from "moment";
 
+export const sortByValue = (list, value) => {
+  let sortedResult = list.slice();
+
+  switch (value) {
+    case `up`:
+      sortedResult.sort((a, b) => a.dueDate - b.dueDate);
+      break;
+    case `down`:
+      sortedResult.sort((a, b) => b.dueDate - a.dueDate);
+      break;
+    case `default`:
+      sortedResult = list.slice();
+      break;
+  }
+
+  return sortedResult;
+};
+
 export const getRandomNum = (min, max) => Math.floor(min + Math.random() * (max + 1 - min));
 
 export const getRandomArray = (arr, min, max) => {
