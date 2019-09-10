@@ -28,40 +28,6 @@ const onDataChange = (tasks) => {
   taskMocks = tasks;
 };
 
-// export const onFilterClick = (evt) => {
-//   if (evt.target.tagName.toLowerCase() !== `input`) {
-//     return;
-//   }
-
-//   let filteredTaskMocks = null;
-
-//   switch (evt.target.id) {
-//     case IdValues.FILTER_ALL:
-//       filteredTaskMocks = taskMocks.filter(({isArchive}) => !isArchive);
-//       break;
-//     case IdValues.FILTER_OVERDUE:
-//       filteredTaskMocks = taskMocks.filter(({dueDate}) => moment(Date.now()).subtract(1, `days`).isAfter(dueDate));
-//       break;
-//     case IdValues.FILTER_TODAY:
-//       filteredTaskMocks = taskMocks.filter(({dueDate}) => new Date(dueDate).toDateString() === new Date(Date.now()).toDateString());
-//       break;
-//     case IdValues.FILTER_FAVORITES:
-//       filteredTaskMocks = taskMocks.filter(({isFavorite}) => isFavorite);
-//       break;
-//     case IdValues.FILTER_REPEATING:
-//       filteredTaskMocks = taskMocks.filter(({repeatingDays}) => Object.keys(repeatingDays).some((day) => repeatingDays[day]));
-//       break;
-//     case IdValues.FILTER_TAGS:
-//       filteredTaskMocks = taskMocks.filter(({tags}) => tags.size > 0);
-//       break;
-//     case IdValues.FILTER_ARCHIVE:
-//       filteredTaskMocks = taskMocks.filter(({isArchive}) => isArchive);
-//       break;
-//   }
-
-//   boardController.show(filteredTaskMocks);
-// };
-
 mainStatistics.getElement().classList.add(`visually-hidden`);
 
 renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
@@ -95,7 +61,7 @@ mainMenu.getElement().addEventListener(`change`, (evt) => {
     case IdValues.STATISTIC:
       boardController.hide();
       searchController.hide();
-      mainStatistics.show();
+      mainStatistics.show(taskMocks);
       break;
     case IdValues.NEW_TASK:
       mainStatistics.hide();
@@ -113,6 +79,9 @@ mainSearch.getElement().addEventListener(`click`, () => {
   searchController.show(taskMocks);
 });
 
-mainFilters.getElement().addEventListener(`click`, () => {
+mainFilters.getElement().addEventListener(`click`, (evt) => {
+  if (evt.target.tagName.toLowerCase() !== `input`) {
+    return;
+  }
   boardController.renderBoard();
 });
