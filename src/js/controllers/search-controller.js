@@ -81,7 +81,7 @@ class SearchController {
 
       this._searchResultInfo = new SearchResultInfo({title: text, count: tasks.length});
       renderElement(this._searchResultGroup.getElement(), this._searchResultInfo.getElement(), `afterbegin`);
-      this._taskListController.setTasks(tasks.slice(0, tasks.length), tasks.slice(tasks.length));
+      this._taskListController.setTasks(tasks, tasks);
     }
   }
 

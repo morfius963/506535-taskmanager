@@ -1,12 +1,12 @@
-import Menu from './js/components/menu.js';
-import Search from './js/components/search.js';
-import Filter from './js/components/filter.js';
-import BoardController from './js/controllers/board-controller.js';
-import Statistics from './js/components/statistics.js';
-import SearchController from './js/controllers/search-controller.js';
-import {filters as mainFiltersData} from './js/data.js';
-import {tasks as mainTasksData} from './js/data.js';
-import {renderElement} from './js/utils.js';
+import Menu from "./js/components/menu.js";
+import Search from "./js/components/search.js";
+import Filter from "./js/components/filter.js";
+import BoardController from "./js/controllers/board-controller.js";
+import Statistics from "./js/components/statistics.js";
+import SearchController from "./js/controllers/search-controller.js";
+import {filters as mainFiltersData} from "./js/data.js";
+import {tasks as mainTasksData} from "./js/data.js";
+import {renderElement} from "./js/utils.js";
 
 const IdValues = {
   TASKS: `control__task`,
@@ -27,6 +27,40 @@ const mainStatistics = new Statistics();
 const onDataChange = (tasks) => {
   taskMocks = tasks;
 };
+
+// export const onFilterClick = (evt) => {
+//   if (evt.target.tagName.toLowerCase() !== `input`) {
+//     return;
+//   }
+
+//   let filteredTaskMocks = null;
+
+//   switch (evt.target.id) {
+//     case IdValues.FILTER_ALL:
+//       filteredTaskMocks = taskMocks.filter(({isArchive}) => !isArchive);
+//       break;
+//     case IdValues.FILTER_OVERDUE:
+//       filteredTaskMocks = taskMocks.filter(({dueDate}) => moment(Date.now()).subtract(1, `days`).isAfter(dueDate));
+//       break;
+//     case IdValues.FILTER_TODAY:
+//       filteredTaskMocks = taskMocks.filter(({dueDate}) => new Date(dueDate).toDateString() === new Date(Date.now()).toDateString());
+//       break;
+//     case IdValues.FILTER_FAVORITES:
+//       filteredTaskMocks = taskMocks.filter(({isFavorite}) => isFavorite);
+//       break;
+//     case IdValues.FILTER_REPEATING:
+//       filteredTaskMocks = taskMocks.filter(({repeatingDays}) => Object.keys(repeatingDays).some((day) => repeatingDays[day]));
+//       break;
+//     case IdValues.FILTER_TAGS:
+//       filteredTaskMocks = taskMocks.filter(({tags}) => tags.size > 0);
+//       break;
+//     case IdValues.FILTER_ARCHIVE:
+//       filteredTaskMocks = taskMocks.filter(({isArchive}) => isArchive);
+//       break;
+//   }
+
+//   boardController.show(filteredTaskMocks);
+// };
 
 mainStatistics.getElement().classList.add(`visually-hidden`);
 
@@ -77,4 +111,8 @@ mainSearch.getElement().addEventListener(`click`, () => {
   mainStatistics.hide();
   boardController.hide();
   searchController.show(taskMocks);
+});
+
+mainFilters.getElement().addEventListener(`click`, () => {
+  boardController.renderBoard();
 });

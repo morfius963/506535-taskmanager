@@ -18,8 +18,8 @@ class TaskListController {
     this._pageDataController = new PageDataController();
   }
 
-  setTasks(viewedTasks, unViewedTasks = []) {
-    this._tasks = [...viewedTasks, ...unViewedTasks];
+  setTasks(viewedTasks, allTasks) {
+    this._tasks = allTasks;
     this._subscriptions = [];
     this._creatingTask = null;
     this._showedTasksCount = viewedTasks.length;
@@ -98,6 +98,7 @@ class TaskListController {
 
     this._creatingTask = null;
     this._pageDataController.updateFilter(this._tasks);
+    this.setTasks(this._tasks.slice(0, this._showedTasksCount), this._tasks);
     this._onDataChangeMain(this._tasks);
   }
 }

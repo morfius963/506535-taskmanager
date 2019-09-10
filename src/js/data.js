@@ -11,7 +11,7 @@ const MOCK_DATA_COUNT = {
     MAX: 3
   },
   TASK: {
-    COUNT: 20
+    COUNT: 12
   }
 };
 
@@ -60,7 +60,7 @@ export const getFilterData = (filterName, tasks) => ({
 
 const getFilterCount = (name, taskList) => {
   const FilterValues = {
-    'all': taskList.length,
+    'all': taskList.filter(({isArchive}) => !isArchive).length,
     'overdue': getOverdueFilterCount(taskList),
     'today': getTodayFilterCount(taskList),
     'favorites': getBooleanFilterCount(taskList, `isFavorite`),
