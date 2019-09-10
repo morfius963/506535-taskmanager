@@ -45,6 +45,7 @@ class Statistics extends AbstractComponent {
             <input
               class="statistic__period-input"
               type="text"
+              placeholder="${this._defaultDate.join(` - `)}"
             />
           </div>
 
