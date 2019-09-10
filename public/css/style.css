@@ -155,8 +155,11 @@ body {
   color: #000;
 }
 
-.board__filter:hover,
-.board__filter:focus {
+.board__filter--active {
+  font-weight: bold;
+}
+
+.board__filter:hover {
   opacity: 0.7;
 }
 

@@ -1,5 +1,4 @@
 import {getFilterData} from "../data.js";
-import {unrenderElement, renderElement} from "../utils.js";
 import Filters from "../components/filter.js";
 
 class PageDataController {
@@ -10,11 +9,15 @@ class PageDataController {
 
   updateFilter(tasks) {
     const filterElem = document.querySelector(`.main__filter`);
+    const currentFilter = Array.from(filterElem.querySelectorAll(`.filter__input`)).find((filter) => filter.checked).id;
     const newFilterData = this._filterNames.map((filter) => getFilterData(filter, tasks));
     const newFilterComponent = new Filters(newFilterData);
 
-    unrenderElement(filterElem);
-    renderElement(this._filterSibling, newFilterComponent.getElement(), `afterend`);
+    filterElem.innerHTML = ``;
+    Array.from(newFilterComponent.getElement().children).forEach((input) => {
+      filterElem.appendChild(input);
+    });
+    filterElem.querySelector(`#${currentFilter}`).checked = true;
   }
 }
 

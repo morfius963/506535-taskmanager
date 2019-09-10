@@ -1,12 +1,12 @@
-import Menu from './js/components/menu.js';
-import Search from './js/components/search.js';
-import Filter from './js/components/filter.js';
-import BoardController from './js/controllers/board-controller.js';
-import Statistics from './js/components/statistics.js';
-import SearchController from './js/controllers/search-controller.js';
-import {filters as mainFiltersData} from './js/data.js';
-import {tasks as mainTasksData} from './js/data.js';
-import {renderElement} from './js/utils.js';
+import Menu from "./js/components/menu.js";
+import Search from "./js/components/search.js";
+import Filter from "./js/components/filter.js";
+import BoardController from "./js/controllers/board-controller.js";
+import Statistics from "./js/components/statistics.js";
+import SearchController from "./js/controllers/search-controller.js";
+import {filters as mainFiltersData} from "./js/data.js";
+import {tasks as mainTasksData} from "./js/data.js";
+import {renderElement} from "./js/utils.js";
 
 const IdValues = {
   TASKS: `control__task`,
@@ -61,7 +61,7 @@ mainMenu.getElement().addEventListener(`change`, (evt) => {
     case IdValues.STATISTIC:
       boardController.hide();
       searchController.hide();
-      mainStatistics.show();
+      mainStatistics.show(taskMocks);
       break;
     case IdValues.NEW_TASK:
       mainStatistics.hide();
@@ -77,4 +77,11 @@ mainSearch.getElement().addEventListener(`click`, () => {
   mainStatistics.hide();
   boardController.hide();
   searchController.show(taskMocks);
+});
+
+mainFilters.getElement().addEventListener(`click`, (evt) => {
+  if (evt.target.tagName.toLowerCase() !== `input`) {
+    return;
+  }
+  boardController.renderBoard();
 });

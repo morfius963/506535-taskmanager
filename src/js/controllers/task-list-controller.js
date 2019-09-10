@@ -11,7 +11,6 @@ class TaskListController {
     this._showedTasksCount = null;
     this._subscriptions = [];
     this._tasks = [];
-    this._sortedTasks = [];
 
     this.onChangeView = this.onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -19,9 +18,8 @@ class TaskListController {
     this._pageDataController = new PageDataController();
   }
 
-  setTasks(viewedTasks, unViewedTasks = []) {
-    this._tasks = [...viewedTasks, ...unViewedTasks];
-    this._sortedTasks = [...viewedTasks, ...unViewedTasks];
+  setTasks(viewedTasks, allTasks) {
+    this._tasks = allTasks;
     this._subscriptions = [];
     this._creatingTask = null;
     this._showedTasksCount = viewedTasks.length;
@@ -81,31 +79,27 @@ class TaskListController {
 
   _onDataChange(newData, oldData) {
     const tasksIndex = this._tasks.findIndex((it) => it === oldData);
-    const sortedTasksIndex = this._sortedTasks.findIndex((it) => it === oldData);
 
     // якщо ми нажали Add new Task і потім його не зберегли, то просто видалити елемент без зміни даних
     if (newData === null && oldData === null) {
-      this._onDataChangeMain(this._sortedTasks);
+      this._onDataChangeMain(this._tasks);
       this._creatingTask = null;
       return;
 
     } else if (oldData === null) {
       this._tasks = [newData, ...this._tasks];
-      this._sortedTasks = [newData, ...this._sortedTasks];
 
     } else if (newData === null) {
       this._tasks = [...this._tasks.slice(0, tasksIndex), ...this._tasks.slice(tasksIndex + 1)];
-      this._sortedTasks = [...this._sortedTasks.slice(0, sortedTasksIndex), ...this._sortedTasks.slice(sortedTasksIndex + 1)];
 
     } else {
       this._tasks[tasksIndex] = newData;
-      this._sortedTasks[sortedTasksIndex] = newData;
     }
 
     this._creatingTask = null;
-    this._pageDataController.updateFilter(this._sortedTasks);
-    this.setTasks(this._sortedTasks);
-    this._onDataChangeMain(this._sortedTasks);
+    this._pageDataController.updateFilter(this._tasks);
+    this.setTasks(this._tasks.slice(0, this._showedTasksCount), this._tasks);
+    this._onDataChangeMain(this._tasks);
   }
 }
 
