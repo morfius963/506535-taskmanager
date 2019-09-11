@@ -20,6 +20,7 @@ class TaskController {
     this._taskEdit = new TaskEdit(data);
 
     this._updatedBooleanData = this._buildNewData();
+    this._flatpickerInput = null;
 
     this.init(mode);
   }
@@ -33,7 +34,7 @@ class TaskController {
       currentView = this._taskEdit;
     }
 
-    flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
+    this._flatpickerInput = flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
       allowInput: true,
       defaultDate: this._data.dueDate,
@@ -45,6 +46,7 @@ class TaskController {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         if (this._container.contains(this._taskEdit.getElement())) {
           this._onChangeView();
+          this._flatpickerInput.close();
         }
       }
 

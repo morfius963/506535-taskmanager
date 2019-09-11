@@ -63,11 +63,6 @@ class TaskListController {
     });
   }
 
-  _renderTask(task) {
-    const taskController = new TaskController(this._container, task, TaskControllerMode.DEFAULT, this.onChangeView, this._onDataChange);
-    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
-  }
-
   onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
 
@@ -100,6 +95,11 @@ class TaskListController {
     this._pageDataController.updateFilter(this._tasks);
     this.setTasks(this._tasks.slice(0, this._showedTasksCount), this._tasks);
     this._onDataChangeMain(this._tasks);
+  }
+
+  _renderTask(task) {
+    const taskController = new TaskController(this._container, task, TaskControllerMode.DEFAULT, this.onChangeView, this._onDataChange);
+    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
   }
 }
 
