@@ -1,4 +1,4 @@
-import {getFilterData} from "../data.js";
+import {getFilterData} from "../utils";
 import Filters from "../components/filter.js";
 
 class PageDataController {

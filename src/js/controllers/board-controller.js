@@ -4,7 +4,7 @@ import TaskList from "../components/task-list.js";
 import LoadMore from "../components/load-more-button.js";
 import NoTasks from "../components/no-tasks.js";
 import TaskListController from "./task-list-controller.js";
-import {renderElement, unrenderElement, sortByValue} from "../utils";
+import {renderElement, unrenderElement, sortByValue} from "../utils.js";
 import moment from "moment";
 
 const TASKS_IN_ROW = 8;
@@ -22,7 +22,7 @@ class BoardController {
   constructor(container, onDataChange) {
     this._container = container;
     this._tasks = [];
-    this._onDataChangeMain = onDataChange;
+    this._onDataChange = onDataChange;
 
     this._showedTasksCount = TASKS_IN_ROW;
 
@@ -31,14 +31,12 @@ class BoardController {
     this._taskList = new TaskList();
     this._loadMore = new LoadMore();
     this._noTasks = new NoTasks();
-    this._taskListController = new TaskListController(this._taskList.getElement(), this._onDataChange.bind(this));
+    this._taskListController = new TaskListController(this._taskList.getElement(), this._onDataChange);
 
     this._bindedOnLoadBtnClick = this._onLoadBtnClick.bind(this);
-
-    this._init();
   }
 
-  _init() {
+  init() {
     renderElement(this._container, this._boardContainer.getElement(), `beforeend`);
     renderElement(this._boardContainer.getElement(), this._sort.getElement(), `beforeend`);
     renderElement(this._boardContainer.getElement(), this._taskList.getElement(), `beforeend`);
@@ -77,7 +75,7 @@ class BoardController {
   }
 
   renderBoard() {
-    const sortedTasks = this._sortByCurrentSortValue(this._tasks);
+    const sortedTasks = this._sortByCurrentValue(this._tasks);
 
     unrenderElement(this._loadMore.getElement());
     this._loadMore.removeElement();
@@ -113,13 +111,6 @@ class BoardController {
     this.renderBoard();
   }
 
-  _onDataChange(tasks) {
-    this._tasks = tasks;
-
-    this._onDataChangeMain(tasks);
-    this.renderBoard();
-  }
-
   _onSortLinkClick(evt) {
     evt.preventDefault();
 
@@ -130,14 +121,14 @@ class BoardController {
     this._sort.getElement().querySelectorAll(`.board__filter`).forEach((sortItem) => sortItem.classList.remove(`board__filter--active`));
     evt.target.classList.add(`board__filter--active`);
 
-    const sortedTasks = this._sortByCurrentSortValue(this._tasks);
+    const sortedTasks = this._sortByCurrentValue(this._tasks);
 
     this._taskListController.setTasks(sortedTasks.slice(0, this._showedTasksCount), this._tasks);
   }
 
   _onLoadBtnClick() {
     const step = this._showedTasksCount + TASKS_IN_ROW;
-    const sortedTasks = this._sortByCurrentSortValue(this._tasks);
+    const sortedTasks = this._sortByCurrentValue(this._tasks);
 
     this._taskListController.addTasks(sortedTasks.slice(this._showedTasksCount, step));
 
@@ -150,7 +141,7 @@ class BoardController {
     }
   }
 
-  _sortByCurrentSortValue(tasks) {
+  _sortByCurrentValue(tasks) {
     const currentSort = Array.from(this._sort.getElement().querySelectorAll(`.board__filter`)).find((sortItem) => sortItem.classList.contains(`board__filter--active`)).dataset.sortType;
     const currentFilter = Array.from(document.querySelectorAll(`.filter__input`)).find((filter) => filter.checked).id;
     let result = null;
