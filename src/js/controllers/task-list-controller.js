@@ -1,5 +1,4 @@
 import TaskController, {Mode as TaskControllerMode} from "./task-controller.js";
-import PageDataController from "./page-data-controller.js";
 import {unrenderElement} from "../utils.js";
 
 class TaskListController {
@@ -14,8 +13,6 @@ class TaskListController {
 
     this.onChangeView = this.onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
-
-    this._pageDataController = new PageDataController();
   }
 
   setTasks(viewedTasks, allTasks) {
@@ -40,7 +37,7 @@ class TaskListController {
 
     const defaultTask = {
       description: ``,
-      dueDate: new Date(),
+      dueDate: new Date().toISOString(),
       tags: new Set(),
       color: ``,
       repeatingDays: {
@@ -72,29 +69,9 @@ class TaskListController {
     }
   }
 
-  _onDataChange(newData, oldData) {
-    const tasksIndex = this._tasks.findIndex((it) => it === oldData);
-
-    // якщо ми нажали Add new Task і потім його не зберегли, то просто видалити елемент без зміни даних
-    if (newData === null && oldData === null) {
-      this._onDataChangeMain(this._tasks);
-      this._creatingTask = null;
-      return;
-
-    } else if (oldData === null) {
-      this._tasks = [newData, ...this._tasks];
-
-    } else if (newData === null) {
-      this._tasks = [...this._tasks.slice(0, tasksIndex), ...this._tasks.slice(tasksIndex + 1)];
-
-    } else {
-      this._tasks[tasksIndex] = newData;
-    }
-
+  _onDataChange(actionType, update) {
     this._creatingTask = null;
-    this._pageDataController.updateFilter(this._tasks);
-    this.setTasks(this._tasks.slice(0, this._showedTasksCount), this._tasks);
-    this._onDataChangeMain(this._tasks);
+    this._onDataChangeMain(actionType, update);
   }
 
   _renderTask(task) {
