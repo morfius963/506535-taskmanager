@@ -2,8 +2,9 @@ import AbstractComponent from "./abstract-component.js";
 import moment from "moment";
 
 class TaskEdit extends AbstractComponent {
-  constructor({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) {
+  constructor({id, description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) {
     super();
+    this.id = id;
     this._description = description;
     this._dueDate = dueDate;
     this._repeatingDays = repeatingDays;
@@ -33,7 +34,7 @@ class TaskEdit extends AbstractComponent {
   }
 
   getTemplate() {
-    return `<article class="card card--edit card--${this._color} ${this._hasRepeatingDays() ? `card--repeat` : ``} ${this._isDeadLine ? `card--deadline` : ``}">
+    return `<article class="card card--edit card--${this._color} ${this._hasRepeatingDays() ? `card--repeat` : ``} ${this._isDeadLine ? `card--deadline` : ``}" id="${this.id}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -225,7 +226,7 @@ class TaskEdit extends AbstractComponent {
     this._resetValue(this._isFavorite, this.getElement().querySelector(`.card__btn--favorites`), `card__btn--disabled`);
 
     this.getElement().querySelector(`.card__date-status`).textContent = this._getDateView() ? `yes` : `no`;
-    this.getElement().querySelector(`.card__date.form-control`).value = `${this._getDateView() ? this._formattedDate : ``}`;
+    this.getElement().querySelector(`.card__date`).value = `${this._getDateView() ? this._formattedDate : ``}`;
     this._resetValue(!this._getDateView(), this.getElement().querySelector(`.card__date-deadline`), `visually-hidden`);
 
     this.getElement().querySelector(`.card__repeat-status`).textContent = this._hasRepeatingDays() ? `yes` : `no`;

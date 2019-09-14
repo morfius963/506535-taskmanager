@@ -5,10 +5,10 @@ export const sortByValue = (list, value) => {
 
   switch (value) {
     case `up`:
-      sortedResult.sort((a, b) => a.dueDate - b.dueDate);
+      sortedResult.sort((a, b) => a.dueDate > b.dueDate ? 1 : -1);
       break;
     case `down`:
-      sortedResult.sort((a, b) => b.dueDate - a.dueDate);
+      sortedResult.sort((a, b) => b.dueDate > a.dueDate ? 1 : -1);
       break;
     case `default`:
       sortedResult = list.slice();
@@ -26,21 +26,6 @@ export const getRandomArray = (arr, min, max) => {
 
   return sortedArray.slice(min, randomMax);
 };
-
-export const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
-  (moment(Date.now()).subtract(1, `days`).isAfter(dueDate) ? acc + 1 : acc), 0);
-
-export const getTodayFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
-  (new Date(dueDate).toDateString() === new Date(Date.now()).toDateString() ? acc + 1 : acc), 0);
-
-export const getBooleanFilterCount = (tasks, value) => tasks.reduce((acc, task) =>
-  (task[value] ? acc + 1 : acc), 0);
-
-export const getRepeatingFilterValue = (tasks) => tasks.reduce((acc, {repeatingDays}) =>
-  (Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? acc + 1 : acc), 0);
-
-export const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
-  (tags.size > 0 ? acc + 1 : acc), 0);
 
 export const POSITION = {
   afterbegin: `afterbegin`,
@@ -73,3 +58,37 @@ export const unrenderElement = (element) => {
     element.remove();
   }
 };
+
+const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
+  (moment(Date.now()).subtract(1, `days`).isAfter(dueDate) ? acc + 1 : acc), 0);
+
+const getTodayFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
+  (new Date(dueDate).toDateString() === new Date(Date.now()).toDateString() ? acc + 1 : acc), 0);
+
+const getBooleanFilterCount = (tasks, value) => tasks.reduce((acc, task) =>
+  (task[value] ? acc + 1 : acc), 0);
+
+const getRepeatingFilterValue = (tasks) => tasks.reduce((acc, {repeatingDays}) =>
+  (Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? acc + 1 : acc), 0);
+
+const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
+  (tags.size > 0 ? acc + 1 : acc), 0);
+
+const getFilterCount = (name, taskList) => {
+  const FilterValues = {
+    'all': () => taskList.filter(({isArchive}) => !isArchive).length,
+    'overdue': () => getOverdueFilterCount(taskList),
+    'today': () => getTodayFilterCount(taskList),
+    'favorites': () => getBooleanFilterCount(taskList, `isFavorite`),
+    'repeating': () => getRepeatingFilterValue(taskList),
+    'tags': () => getTagsFilterCount(taskList),
+    'archive': () => getBooleanFilterCount(taskList, `isArchive`)
+  };
+
+  return FilterValues[name]();
+};
+
+export const getFilterData = (filterName, tasks) => ({
+  title: filterName,
+  count: getFilterCount(filterName, tasks)
+});

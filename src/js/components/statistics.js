@@ -23,7 +23,7 @@ class Statistics extends AbstractComponent {
     this._tagsChart = null;
     this._colorChart = null;
 
-    flatpickr(this.getElement().querySelector(`.statistic__period-input`), {
+    this._flatpickerInput = flatpickr(this.getElement().querySelector(`.statistic__period-input`), {
       allowInput: false,
       mode: `range`,
       defaultDate: this._defaultDate,
@@ -76,6 +76,19 @@ class Statistics extends AbstractComponent {
   }
 
   show(tasks, isDateChange = false) {
+    if (tasks.length === 0) {
+      this._setVisibility(`add`, this._daysChartCtx, this._tagsChartCtx, this._colorChartCtx);
+      this.getElement().querySelector(`.statistic__task-found`).textContent = tasks.length;
+      return;
+    } else {
+      this._setVisibility(`remove`, this._daysChartCtx, this._tagsChartCtx, this._colorChartCtx);
+    }
+
+    if (!isDateChange) {
+      this._flatpickerInput.clear();
+      this.getElement().querySelector(`.statistic__period-input`).value = this._defaultDate.join(` - `);
+    }
+
     this._tasks = isDateChange ? this._tasks : tasks.filter(({isArchive}) => isArchive);
     this._sortedTasks = tasks.filter(({isArchive}) => isArchive);
 
@@ -272,6 +285,21 @@ class Statistics extends AbstractComponent {
 
   _makeDateFromValue(dateValues, format) {
     return dateValues.map((date) => moment(date, format));
+  }
+
+  _setVisibility(operation, ...elems) {
+    switch (operation) {
+      case `add`:
+        elems.forEach((elem) => {
+          elem.classList.add(`visually-hidden`);
+        });
+        break;
+      case `remove`:
+        elems.forEach((elem) => {
+          elem.classList.remove(`visually-hidden`);
+        });
+        break;
+    }
   }
 }
 

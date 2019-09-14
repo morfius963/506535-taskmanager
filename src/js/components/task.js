@@ -2,8 +2,9 @@ import AbstractComponent from "./abstract-component.js";
 import moment from "moment";
 
 class Task extends AbstractComponent {
-  constructor({description, dueDate, repeatingDays, tags, color, isArchive, isFavorite}) {
+  constructor({id, description, dueDate, repeatingDays, tags, color, isArchive, isFavorite}) {
     super();
+    this.id = id;
     this._description = description;
     this._dueDate = dueDate;
     this._repeatingDays = repeatingDays;
@@ -18,7 +19,7 @@ class Task extends AbstractComponent {
 
   getTemplate() {
     return `<article class="card card--${this._color} ${Object.keys(this._repeatingDays).some((day) => this._repeatingDays[day])
-      ? `card--repeat` : ``} ${this._isDeadLine ? `card--deadline` : ``}">
+      ? `card--repeat` : ``} ${this._isDeadLine ? `card--deadline` : ``}" id="${this.id}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">

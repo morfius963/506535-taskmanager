@@ -6,11 +6,11 @@ import TaskListController from "./task-list-controller.js";
 import {renderElement, unrenderElement} from "../utils.js";
 
 class SearchController {
-  constructor(container, search, onBackButtonClick, onDataChangePage) {
+  constructor(container, search, onBackButtonClick, onDataChange) {
     this._container = container;
     this._search = search;
     this._onBackButtonClick = onBackButtonClick;
-    this._onDataChangePage = onDataChangePage;
+    this._onDataChangePage = onDataChange;
 
     this._tasks = [];
 
@@ -22,11 +22,9 @@ class SearchController {
         this._searchResultGroup.getElement().querySelector(`.result__cards`),
         this._onDataChange.bind(this)
     );
-
-    this._init();
   }
 
-  _init() {
+  init() {
     this.hide();
 
     renderElement(this._container, this._searchResult.getElement(), `beforeend`);
@@ -56,6 +54,8 @@ class SearchController {
 
   show(tasks) {
     this._tasks = tasks;
+    this._taskListController.setTasks(tasks, tasks);
+    this._searchResultInfo.updateCount(this._tasks.length);
 
     if (this._searchResult.getElement().classList.contains(`visually-hidden`)) {
       this._showSearchResult(``, tasks);
@@ -85,10 +85,8 @@ class SearchController {
     }
   }
 
-  _onDataChange(tasks) {
-    this._tasks = tasks;
-    this._onDataChangePage(tasks);
-    this._searchResultInfo.updateCount(tasks.length);
+  _onDataChange(actionType, update) {
+    this._onDataChangePage(actionType, update, true);
   }
 }
 
