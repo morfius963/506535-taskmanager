@@ -76,16 +76,16 @@ const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
 
 const getFilterCount = (name, taskList) => {
   const FilterValues = {
-    'all': taskList.filter(({isArchive}) => !isArchive).length,
-    'overdue': getOverdueFilterCount(taskList),
-    'today': getTodayFilterCount(taskList),
-    'favorites': getBooleanFilterCount(taskList, `isFavorite`),
-    'repeating': getRepeatingFilterValue(taskList),
-    'tags': getTagsFilterCount(taskList),
-    'archive': getBooleanFilterCount(taskList, `isArchive`)
+    'all': () => taskList.filter(({isArchive}) => !isArchive).length,
+    'overdue': () => getOverdueFilterCount(taskList),
+    'today': () => getTodayFilterCount(taskList),
+    'favorites': () => getBooleanFilterCount(taskList, `isFavorite`),
+    'repeating': () => getRepeatingFilterValue(taskList),
+    'tags': () => getTagsFilterCount(taskList),
+    'archive': () => getBooleanFilterCount(taskList, `isArchive`)
   };
 
-  return FilterValues[name];
+  return FilterValues[name]();
 };
 
 export const getFilterData = (filterName, tasks) => ({
