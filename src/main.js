@@ -28,7 +28,7 @@ const mainMenu = new Menu();
 const mainSearch = new Search();
 const mainStatistics = new Statistics();
 
-const onDataChange = (actionType, update, isSearch = false) => {
+const onDataChange = (actionType, update, isSearch = false, onError) => {
   if (actionType === null || update === null) {
     boardController.renderBoard();
     return;
@@ -49,6 +49,9 @@ const onDataChange = (actionType, update, isSearch = false) => {
           } else {
             boardController.show(tasks);
           }
+        })
+        .catch(() => {
+          onError();
         });
       break;
     case `delete`:
@@ -64,6 +67,9 @@ const onDataChange = (actionType, update, isSearch = false) => {
           } else {
             boardController.show(tasks);
           }
+        })
+        .catch(() => {
+          onError();
         });
       break;
     case `create`:
@@ -75,6 +81,9 @@ const onDataChange = (actionType, update, isSearch = false) => {
           taskMainData = tasks;
           boardController.show(tasks);
           pageDataController.updateFilter(tasks);
+        })
+        .catch(() => {
+          onError();
         });
   }
 };

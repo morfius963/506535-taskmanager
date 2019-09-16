@@ -61,10 +61,7 @@ class API {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(API.checkStatus)
-      .catch((err) => {
-        throw err;
-      });
+      .then(API.checkStatus);
   }
 }
 
