@@ -69,9 +69,9 @@ class TaskListController {
     }
   }
 
-  _onDataChange(actionType, update) {
+  _onDataChange(actionType, update, onError) {
     this._creatingTask = null;
-    this._onDataChangeMain(actionType, update);
+    this._onDataChangeMain(actionType, update, false, onError);
   }
 
   _renderTask(task) {

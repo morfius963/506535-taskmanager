@@ -3,6 +3,7 @@ import Filters from "../components/filter.js";
 
 class PageDataController {
   constructor() {
+    this._newFilterComponent = new Filters();
     this._filterNames = [`all`, `overdue`, `today`, `favorites`, `repeating`, `tags`, `archive`];
     this._filterSibling = document.querySelector(`.main__search`);
   }
@@ -11,10 +12,11 @@ class PageDataController {
     const filterElem = document.querySelector(`.main__filter`);
     const currentFilter = Array.from(filterElem.querySelectorAll(`.filter__input`)).find((filter) => filter.checked).id;
     const newFilterData = this._filterNames.map((filter) => getFilterData(filter, tasks));
-    const newFilterComponent = new Filters(newFilterData);
+
+    this._newFilterComponent.setFilterData(newFilterData);
 
     filterElem.innerHTML = ``;
-    Array.from(newFilterComponent.getElement().children).forEach((input) => {
+    Array.from(this._newFilterComponent.getElement().children).forEach((input) => {
       filterElem.appendChild(input);
     });
     filterElem.querySelector(`#${currentFilter}`).checked = true;

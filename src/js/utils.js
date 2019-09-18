@@ -74,19 +74,17 @@ const getRepeatingFilterValue = (tasks) => tasks.reduce((acc, {repeatingDays}) =
 const getTagsFilterCount = (tasks) => tasks.reduce((acc, {tags}) =>
   (tags.size > 0 ? acc + 1 : acc), 0);
 
-const getFilterCount = (name, taskList) => {
-  const FilterValues = {
-    'all': () => taskList.filter(({isArchive}) => !isArchive).length,
-    'overdue': () => getOverdueFilterCount(taskList),
-    'today': () => getTodayFilterCount(taskList),
-    'favorites': () => getBooleanFilterCount(taskList, `isFavorite`),
-    'repeating': () => getRepeatingFilterValue(taskList),
-    'tags': () => getTagsFilterCount(taskList),
-    'archive': () => getBooleanFilterCount(taskList, `isArchive`)
-  };
-
-  return FilterValues[name]();
+const FilterValues = {
+  'all': (taskList) => taskList.filter(({isArchive}) => !isArchive).length,
+  'overdue': (taskList) => getOverdueFilterCount(taskList),
+  'today': (taskList) => getTodayFilterCount(taskList),
+  'favorites': (taskList) => getBooleanFilterCount(taskList, `isFavorite`),
+  'repeating': (taskList) => getRepeatingFilterValue(taskList),
+  'tags': (taskList) => getTagsFilterCount(taskList),
+  'archive': (taskList) => getBooleanFilterCount(taskList, `isArchive`)
 };
+
+const getFilterCount = (name, taskList) => FilterValues[name](taskList);
 
 export const getFilterData = (filterName, tasks) => ({
   title: filterName,

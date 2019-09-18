@@ -1,12 +1,13 @@
 import Menu from "./js/components/menu.js";
 import Search from "./js/components/search.js";
-import Filter from "./js/components/filter.js";
+import Filters from "./js/components/filter.js";
 import BoardController from "./js/controllers/board-controller.js";
 import Statistics from "./js/components/statistics.js";
+import LoadingMessage from "./js/components/loading-message.js";
 import SearchController from "./js/controllers/search-controller.js";
 import PageDataController from "./js/controllers/page-data-controller.js";
 import API from "./js/api.js";
-import {renderElement, getFilterData} from "./js/utils.js";
+import {renderElement, getFilterData, unrenderElement} from "./js/utils.js";
 
 const IdValues = {
   TASKS: `control__task`,
@@ -23,12 +24,7 @@ const menuContainer = document.querySelector(`.main__control`);
 let taskMainData = null;
 let filterMainData = null;
 
-let mainFilters = null;
-const mainMenu = new Menu();
-const mainSearch = new Search();
-const mainStatistics = new Statistics();
-
-const onDataChange = (actionType, update, isSearch = false) => {
+const onDataChange = (actionType, update, isSearch = false, onError) => {
   if (actionType === null || update === null) {
     boardController.renderBoard();
     return;
@@ -49,6 +45,9 @@ const onDataChange = (actionType, update, isSearch = false) => {
           } else {
             boardController.show(tasks);
           }
+        })
+        .catch(() => {
+          onError();
         });
       break;
     case `delete`:
@@ -64,6 +63,9 @@ const onDataChange = (actionType, update, isSearch = false) => {
           } else {
             boardController.show(tasks);
           }
+        })
+        .catch(() => {
+          onError();
         });
       break;
     case `create`:
@@ -75,6 +77,9 @@ const onDataChange = (actionType, update, isSearch = false) => {
           taskMainData = tasks;
           boardController.show(tasks);
           pageDataController.updateFilter(tasks);
+        })
+        .catch(() => {
+          onError();
         });
   }
 };
@@ -85,6 +90,12 @@ const onSearchBackButtonClick = () => {
   boardController.show(taskMainData);
 };
 
+const mainMenu = new Menu();
+const mainSearch = new Search();
+const mainFilters = new Filters();
+const mainStatistics = new Statistics();
+const loadingMessage = new LoadingMessage();
+
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 const boardController = new BoardController(mainContainer, onDataChange);
 const searchController = new SearchController(mainContainer, mainSearch, onSearchBackButtonClick, onDataChange);
@@ -92,27 +103,30 @@ const pageDataController = new PageDataController();
 
 mainStatistics.getElement().classList.add(`visually-hidden`);
 
+renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
+renderElement(mainContainer, mainSearch.getElement(), `beforeend`);
+renderElement(mainContainer, Filters.getMockElement(), `beforeend`);
+renderElement(mainContainer, mainStatistics.getElement(), `beforeend`);
+renderElement(mainContainer, loadingMessage.getElement(), `beforeend`);
+
 api.getTasks()
   .then((tasks) => {
     taskMainData = tasks;
     filterMainData = FILTER_NAMES.map((filter) => getFilterData(filter, tasks));
   })
   .then(() => {
-    mainFilters = new Filter(filterMainData);
+    mainFilters.setFilterData(filterMainData);
     mainFilters.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName.toLowerCase() !== `input`) {
         return;
       }
       boardController.renderBoard();
     });
+    document.querySelector(`.main__filter`).replaceWith(mainFilters.getElement());
   })
   .then(() => {
-    renderElement(menuContainer, mainMenu.getElement(), `beforeend`);
-    renderElement(mainContainer, mainSearch.getElement(), `beforeend`);
-    renderElement(mainContainer, mainFilters.getElement(), `beforeend`);
-    renderElement(mainContainer, mainStatistics.getElement(), `beforeend`);
-  })
-  .then(() => {
+    unrenderElement(loadingMessage.getElement());
+    loadingMessage.removeElement();
     boardController.init();
     searchController.init();
     boardController.show(taskMainData);
@@ -144,10 +158,4 @@ mainMenu.getElement().addEventListener(`change`, (evt) => {
       mainMenu.getElement().querySelector(`#${IdValues.TASKS}`).checked = true;
       break;
   }
-});
-
-mainSearch.getElement().addEventListener(`click`, () => {
-  mainStatistics.hide();
-  boardController.hide();
-  searchController.show(taskMainData);
 });

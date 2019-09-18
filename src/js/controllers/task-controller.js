@@ -9,6 +9,7 @@ export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
 };
+const ON_DATA_CHANGE_DELAY = 1000;
 
 class TaskController {
   constructor(container, data, mode, onChangeView, onDataChange) {
@@ -109,12 +110,22 @@ class TaskController {
         evt.preventDefault();
 
         const entry = this._buildNewData();
-        this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, entry);
+
+        this.blockForm(`save`, true);
+        setTimeout(this._onDataChange.bind(this,
+            mode === Mode.DEFAULT ? `update` : `create`,
+            entry,
+            () => {
+              this.onErrorDataChange();
+            }),
+        ON_DATA_CHANGE_DELAY);
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
     this._taskEdit.getElement().querySelector(`.card__delete`)
       .addEventListener(`click`, () => {
+
+        this.blockForm(`delete`, true);
 
         if (mode === Mode.ADDING) {
           unrenderElement(this._taskEdit.getElement());
@@ -122,12 +133,61 @@ class TaskController {
           this._onDataChange(null, null);
 
         } else if (mode === Mode.DEFAULT) {
-          this._onDataChange(`delete`, this._data);
+          setTimeout(this._onDataChange.bind(this, `delete`, this._data), ON_DATA_CHANGE_DELAY);
         }
 
       });
 
     renderElement(this._container, currentView.getElement(), renderPosition);
+  }
+
+  blockForm(btnValue, isDisabled) {
+    const buttonSave = this._taskEdit.getElement().querySelector(`.card__save`);
+    const buttonDelete = this._taskEdit.getElement().querySelector(`.card__delete`);
+
+    this._taskEdit.getElement().querySelector(`.card__text`).disabled = isDisabled;
+    this._taskEdit.getElement().querySelector(`.card__hashtag-input`).disabled = isDisabled;
+    this._taskEdit.getElement().querySelector(`.card__inner`).style.boxShadow = ``;
+    this._taskEdit.getElement().querySelector(`.card__inner`).style.borderColor = `#000000`;
+    buttonSave.disabled = isDisabled;
+    buttonDelete.disabled = isDisabled;
+
+    if (isDisabled) {
+      if (btnValue === `save`) {
+        buttonSave.textContent = `Saving...`;
+      } else {
+        buttonDelete.textContent = `Deleting...`;
+      }
+    } else {
+      buttonSave.textContent = `Save`;
+      buttonDelete.textContent = `Delete`;
+    }
+  }
+
+  shakeTask() {
+    const ANIMATION_TIMEOUT = 600;
+    const taskEditElement = this._taskEdit.getElement();
+    taskEditElement.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    taskEditElement.style.zIndex = `1`;
+
+    setTimeout(() => {
+      taskEditElement.style.animation = ``;
+      taskEditElement.style.zIndex = ``;
+    }, ANIMATION_TIMEOUT);
+  }
+
+  onErrorDataChange() {
+    this.shakeTask();
+    this.blockForm(null, false);
+    this._taskEdit.getElement().querySelector(`.card__inner`).style.boxShadow = `0 0 10px 0 red`;
+    this._taskEdit.getElement().querySelector(`.card__inner`).style.borderColor = `red`;
+  }
+
+  setDefaultView() {
+    if (this._container.contains(this._taskEdit.getElement())) {
+      this._taskEdit.resetForm();
+      this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+    }
   }
 
   _setBooleanValue(evt, value) {
@@ -181,13 +241,6 @@ class TaskController {
     };
 
     return entry;
-  }
-
-  setDefaultView() {
-    if (this._container.contains(this._taskEdit.getElement())) {
-      this._taskEdit.resetForm();
-      this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
-    }
   }
 }
 
