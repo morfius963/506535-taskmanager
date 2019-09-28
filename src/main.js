@@ -7,6 +7,8 @@ import LoadingMessage from "./js/components/loading-message.js";
 import SearchController from "./js/controllers/search-controller.js";
 import PageDataController from "./js/controllers/page-data-controller.js";
 import API from "./js/api.js";
+import Provider from "./js/provider.js";
+import Store from "./js/store.js";
 import {renderElement, getFilterData, unrenderElement} from "./js/utils.js";
 
 const IdValues = {
@@ -17,6 +19,7 @@ const IdValues = {
 const FILTER_NAMES = [`all`, `overdue`, `today`, `favorites`, `repeating`, `tags`, `archive`];
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://htmlacademy-es-9.appspot.com/task-manager`;
+const TASKS_STORE_KEY = `tasks-store-key`;
 
 const mainContainer = document.querySelector(`.main`);
 const menuContainer = document.querySelector(`.main__control`);
@@ -32,11 +35,11 @@ const onDataChange = (actionType, update, isSearch = false, onError) => {
 
   switch (actionType) {
     case `update`:
-      api.updateTask({
+      provider.updateTask({
         id: update.id,
         data: update.toRAW()
       })
-        .then(() => api.getTasks())
+        .then(() => provider.getTasks())
         .then((tasks) => {
           taskMainData = tasks;
           pageDataController.updateFilter(tasks);
@@ -51,10 +54,10 @@ const onDataChange = (actionType, update, isSearch = false, onError) => {
         });
       break;
     case `delete`:
-      api.deleteTask({
+      provider.deleteTask({
         id: update.id
       })
-        .then(() => api.getTasks())
+        .then(() => provider.getTasks())
         .then((tasks) => {
           taskMainData = tasks;
           pageDataController.updateFilter(tasks);
@@ -69,10 +72,10 @@ const onDataChange = (actionType, update, isSearch = false, onError) => {
         });
       break;
     case `create`:
-      api.createTask({
+      provider.createTask({
         task: update.toRAW()
       })
-        .then(() => api.getTasks())
+        .then(() => provider.getTasks())
         .then((tasks) => {
           taskMainData = tasks;
           boardController.show(tasks);
@@ -97,9 +100,11 @@ const mainStatistics = new Statistics();
 const loadingMessage = new LoadingMessage();
 
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+const store = new Store({storage: window.localStorage, key: TASKS_STORE_KEY});
 const boardController = new BoardController(mainContainer, onDataChange);
 const searchController = new SearchController(mainContainer, mainSearch, onSearchBackButtonClick, onDataChange);
 const pageDataController = new PageDataController();
+const provider = new Provider({api, store, generateId: () => String(Date.now())});
 
 mainStatistics.getElement().classList.add(`visually-hidden`);
 
@@ -109,7 +114,7 @@ renderElement(mainContainer, Filters.getMockElement(), `beforeend`);
 renderElement(mainContainer, mainStatistics.getElement(), `beforeend`);
 renderElement(mainContainer, loadingMessage.getElement(), `beforeend`);
 
-api.getTasks()
+provider.getTasks()
   .then((tasks) => {
     taskMainData = tasks;
     filterMainData = FILTER_NAMES.map((filter) => getFilterData(filter, tasks));
@@ -158,4 +163,17 @@ mainMenu.getElement().addEventListener(`change`, (evt) => {
       mainMenu.getElement().querySelector(`#${IdValues.TASKS}`).checked = true;
       break;
   }
+});
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title} [OFFLINE]`;
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncTasks()
+    .then((updatedTasks) => {
+      taskMainData = updatedTasks;
+    })
+    .then(() => boardController.show(taskMainData));
 });

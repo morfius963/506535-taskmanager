@@ -22,6 +22,7 @@ class TaskController {
 
     this._updatedBooleanData = this._buildNewData();
     this._flatpickerInput = null;
+    this._onEscKeyDown = this._onEscKeyDownEvent.bind(this);
 
     this.init(mode);
   }
@@ -40,17 +41,6 @@ class TaskController {
       defaultDate: this._data.dueDate,
       dateFormat: `d F, Y`,
     });
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        if (this._container.contains(this._taskEdit.getElement())) {
-          this._onChangeView();
-          this._flatpickerInput.close();
-        }
-      }
-
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
 
     this._taskView.getElement()
       .querySelector(`.card__btn--archive`)
@@ -83,25 +73,25 @@ class TaskController {
       .addEventListener(`click`, () => {
         this._onChangeView();
         this._container.replaceChild(this._taskEdit.getElement(), this._taskView.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
+        document.addEventListener(`keydown`, this._onEscKeyDown);
       });
 
     this._taskEdit.getElement()
       .querySelector(`textarea`)
       .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
       });
 
     this._taskEdit.getElement()
       .querySelector(`.card__hashtag-input`)
       .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
+        document.addEventListener(`keydown`, this._onEscKeyDown);
       });
 
     this._taskEdit.getElement()
       .querySelector(`textarea`)
       .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
+        document.addEventListener(`keydown`, this._onEscKeyDown);
       });
 
     this._taskEdit.getElement()
@@ -119,7 +109,7 @@ class TaskController {
               this.onErrorDataChange();
             }),
         ON_DATA_CHANGE_DELAY);
-        document.removeEventListener(`keydown`, onEscKeyDown);
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
       });
 
     this._taskEdit.getElement().querySelector(`.card__delete`)
@@ -136,6 +126,7 @@ class TaskController {
           setTimeout(this._onDataChange.bind(this, `delete`, this._data), ON_DATA_CHANGE_DELAY);
         }
 
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
       });
 
     renderElement(this._container, currentView.getElement(), renderPosition);
@@ -181,6 +172,7 @@ class TaskController {
     this.blockForm(null, false);
     this._taskEdit.getElement().querySelector(`.card__inner`).style.boxShadow = `0 0 10px 0 red`;
     this._taskEdit.getElement().querySelector(`.card__inner`).style.borderColor = `red`;
+    document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
   setDefaultView() {
@@ -188,6 +180,17 @@ class TaskController {
       this._taskEdit.resetForm();
       this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
     }
+  }
+
+  _onEscKeyDownEvent(evt) {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      if (this._container.contains(this._taskEdit.getElement())) {
+        this._onChangeView();
+        this._flatpickerInput.close();
+      }
+    }
+
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _setBooleanValue(evt, value) {

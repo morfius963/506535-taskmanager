@@ -25,6 +25,10 @@ class API {
     return response.json();
   }
 
+  static setSyncData(update) {
+    return [...update.created, ...update.updated.map((updateItem) => updateItem.payload.task)];
+  }
+
   getTasks() {
     return this._load({url: `tasks`})
       .then(API.toJSON)
@@ -55,6 +59,20 @@ class API {
 
   deleteTask({id}) {
     return this._load({url: `tasks/${id}`, method: Method.DELETE});
+  }
+
+  syncTasks({tasks}) {
+    return this._load({
+      url: `tasks/sync`,
+      method: `POST`,
+      body: JSON.stringify(tasks),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then(API.toJSON)
+    .then((newTasksData) => {
+      return API.setSyncData(newTasksData);
+    })
+    .then((ModelTask.parseTasks));
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

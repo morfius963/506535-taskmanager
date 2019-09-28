@@ -90,3 +90,7 @@ export const getFilterData = (filterName, tasks) => ({
   title: filterName,
   count: getFilterCount(filterName, tasks)
 });
+
+export const objectToArray = (object) => {
+  return Object.keys(object).map((id) => object[id]);
+};
