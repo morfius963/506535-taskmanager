@@ -603,7 +603,7 @@ body {
 .card--edit .card__hashtag-delete::after {
   content: "";
   position: absolute;
-  background: url("../img/close.svg") no-repeat;
+  background: url("./../img/close.svg") no-repeat;
   background-size: 8px;
   width: 8px;
   height: 8px;

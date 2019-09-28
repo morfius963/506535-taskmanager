@@ -232,6 +232,8 @@ class TaskEdit extends AbstractComponent {
     this.getElement().querySelector(`.card__repeat-status`).textContent = this._hasRepeatingDays() ? `yes` : `no`;
     this._resetValue(!this._hasRepeatingDays(), this.getElement().querySelector(`.card__repeat-days`), `visually-hidden`);
 
+    this.getElement().querySelector(`.card__inner`).style.boxShadow = ``;
+    this.getElement().querySelector(`.card__inner`).style.borderColor = `#000000`;
     this.getElement().querySelector(`.card__hashtag-list`).innerHTML = ``;
     this.getElement().querySelector(`.card__hashtag-list`).insertAdjacentHTML(`beforeend`, `${[...this._tags].map((tag) => `<span class="card__hashtag-inner">
       <input

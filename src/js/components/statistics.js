@@ -275,7 +275,6 @@ class Statistics extends AbstractComponent {
       }
 
       const dateValues = dateItems.map((date) => moment(date, `DD MMM`));
-      dateValues[1].add(1, `days`);
       const sortedByDateTasks = this._tasks.filter(({dueDate}) => moment(dueDate).isBetween(...dateValues, null, `[]`));
 
       this._clearCharts(this._daysChart, this._tagsChart, this._colorChart);
