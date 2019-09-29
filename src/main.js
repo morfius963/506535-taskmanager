@@ -106,6 +106,10 @@ const searchController = new SearchController(mainContainer, mainSearch, onSearc
 const pageDataController = new PageDataController();
 const provider = new Provider({api, store, generateId: () => String(Date.now())});
 
+if (!Provider.isOnline()) {
+  document.title = `${document.title} [OFFLINE]`;
+}
+
 mainStatistics.getElement().classList.add(`visually-hidden`);
 
 renderElement(menuContainer, mainMenu.getElement(), `beforeend`);

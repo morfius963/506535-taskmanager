@@ -48,6 +48,14 @@
       
     </main>
 
+
+  <script>
+    navigator.serviceWorker.register(`./sw.js`)
+      .catch((error) => {
+        throw new Error(`Registration failed with ` + error);
+      });
+  </script>
+
   <script src="./bundle.js"></script>
   </body>
 </html>

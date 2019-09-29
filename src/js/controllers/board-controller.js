@@ -111,36 +111,6 @@ class BoardController {
     this.renderBoard();
   }
 
-  _onSortLinkClick(evt) {
-    evt.preventDefault();
-
-    if (evt.target.tagName.toLowerCase() !== `a`) {
-      return;
-    }
-
-    this._sort.getElement().querySelectorAll(`.board__filter`).forEach((sortItem) => sortItem.classList.remove(`board__filter--active`));
-    evt.target.classList.add(`board__filter--active`);
-
-    const sortedTasks = this._sortByCurrentValue(this._tasks);
-
-    this._taskListController.setTasks(sortedTasks.slice(0, this._showedTasksCount), this._tasks);
-  }
-
-  _onLoadBtnClick() {
-    const step = this._showedTasksCount + TASKS_IN_ROW;
-    const sortedTasks = this._sortByCurrentValue(this._tasks);
-
-    this._taskListController.addTasks(sortedTasks.slice(this._showedTasksCount, step));
-
-    this._showedTasksCount = step;
-
-    if (this._showedTasksCount >= this._tasks.length) {
-      this._loadMore.getElement().removeEventListener(`click`, this._bindedOnLoadBtnClick);
-      unrenderElement(this._loadMore.getElement());
-      this._loadMore.removeElement();
-    }
-  }
-
   _sortByCurrentValue(tasks) {
     const currentSort = Array.from(this._sort.getElement().querySelectorAll(`.board__filter`)).find((sortItem) => sortItem.classList.contains(`board__filter--active`)).dataset.sortType;
     const currentFilter = Array.from(document.querySelectorAll(`.filter__input`)).find((filter) => filter.checked).id;
@@ -183,6 +153,36 @@ class BoardController {
     }
 
     return result;
+  }
+
+  _onSortLinkClick(evt) {
+    evt.preventDefault();
+
+    if (evt.target.tagName.toLowerCase() !== `a`) {
+      return;
+    }
+
+    this._sort.getElement().querySelectorAll(`.board__filter`).forEach((sortItem) => sortItem.classList.remove(`board__filter--active`));
+    evt.target.classList.add(`board__filter--active`);
+
+    const sortedTasks = this._sortByCurrentValue(this._tasks);
+
+    this._taskListController.setTasks(sortedTasks.slice(0, this._showedTasksCount), this._tasks);
+  }
+
+  _onLoadBtnClick() {
+    const step = this._showedTasksCount + TASKS_IN_ROW;
+    const sortedTasks = this._sortByCurrentValue(this._tasks);
+
+    this._taskListController.addTasks(sortedTasks.slice(this._showedTasksCount, step));
+
+    this._showedTasksCount = step;
+
+    if (this._showedTasksCount >= this._tasks.length) {
+      this._loadMore.getElement().removeEventListener(`click`, this._bindedOnLoadBtnClick);
+      unrenderElement(this._loadMore.getElement());
+      this._loadMore.removeElement();
+    }
   }
 }
 

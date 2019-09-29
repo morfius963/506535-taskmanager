@@ -266,22 +266,6 @@ class Statistics extends AbstractComponent {
     });
   }
 
-  _onDateInputChange() {
-    this.getElement().querySelector(`.statistic__period-input`).addEventListener(`change`, () => {
-      const dateItems = this.getElement().querySelector(`.statistic__period-input`).value.split(` - `);
-
-      if (dateItems.length === 1) {
-        return;
-      }
-
-      const dateValues = dateItems.map((date) => moment(date, `DD MMM`));
-      const sortedByDateTasks = this._tasks.filter(({dueDate}) => moment(dueDate).isBetween(...dateValues, null, `[]`));
-
-      this._clearCharts(this._daysChart, this._tagsChart, this._colorChart);
-      this.show(sortedByDateTasks, true);
-    });
-  }
-
   _makeDateFromValue(dateValues, format) {
     return dateValues.map((date) => moment(date, format));
   }
@@ -299,6 +283,22 @@ class Statistics extends AbstractComponent {
         });
         break;
     }
+  }
+
+  _onDateInputChange() {
+    this.getElement().querySelector(`.statistic__period-input`).addEventListener(`change`, () => {
+      const dateItems = this.getElement().querySelector(`.statistic__period-input`).value.split(` - `);
+
+      if (dateItems.length === 1) {
+        return;
+      }
+
+      const dateValues = dateItems.map((date) => moment(date, `DD MMM`));
+      const sortedByDateTasks = this._tasks.filter(({dueDate}) => moment(dueDate).isBetween(...dateValues, null, `[]`));
+
+      this._clearCharts(this._daysChart, this._tagsChart, this._colorChart);
+      this.show(sortedByDateTasks, true);
+    });
   }
 }
 
