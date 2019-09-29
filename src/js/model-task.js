@@ -10,14 +10,6 @@ class ModelTask {
     this.isArchive = Boolean(data[`is_archived`]);
   }
 
-  static parseTask(data) {
-    return new ModelTask(data);
-  }
-
-  static parseTasks(data) {
-    return data.map(ModelTask.parseTask);
-  }
-
   toRAW() {
     return {
       'id': this.id,
@@ -29,6 +21,14 @@ class ModelTask {
       'is_favorite': this.isFavorite,
       'is_archived': this.isArchive,
     };
+  }
+
+  static parseTask(data) {
+    return new ModelTask(data);
+  }
+
+  static parseTasks(data) {
+    return data.map(ModelTask.parseTask);
   }
 }
 

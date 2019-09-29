@@ -7,6 +7,27 @@ class Filters extends AbstractComponent {
     this._filters = [];
   }
 
+  setFilterData(filters) {
+    this.removeElement();
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return `<section class="main__filter filter container">
+      ${this._filters.map(({title, count}) => `<input
+        type="radio"
+        id="filter__${title}"
+        class="filter__input visually-hidden"
+        name="filter"
+        ${title === `all` ? `checked` : ``}
+        ${count > 0 ? `` : `disabled`}
+      />
+      <label for="filter__${title}" class="filter__label">
+      ${title.toUpperCase()} <span class="filter__${title}-count">${count}</span></label>`)
+      .join(``)}
+    </section>`;
+  }
+
   static getMockElement() {
     return createElement(`<section class="main__filter filter container">
       <input
@@ -73,27 +94,6 @@ class Filters extends AbstractComponent {
         >Archive </label
       >
     </section>`);
-  }
-
-  setFilterData(filters) {
-    this.removeElement();
-    this._filters = filters;
-  }
-
-  getTemplate() {
-    return `<section class="main__filter filter container">
-      ${this._filters.map(({title, count}) => `<input
-        type="radio"
-        id="filter__${title}"
-        class="filter__input visually-hidden"
-        name="filter"
-        ${title === `all` ? `checked` : ``}
-        ${count > 0 ? `` : `disabled`}
-      />
-      <label for="filter__${title}" class="filter__label">
-      ${title.toUpperCase()} <span class="filter__${title}-count">${count}</span></label>`)
-      .join(``)}
-    </section>`;
   }
 }
 

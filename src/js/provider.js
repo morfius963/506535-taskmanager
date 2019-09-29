@@ -9,7 +9,7 @@ class Provider {
   }
 
   getTasks() {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.getTasks()
       .then((tasks) => {
         tasks.map((it) => this._store.setItem({key: it.id, item: it.toRAW()}));
@@ -25,7 +25,7 @@ class Provider {
   }
 
   createTask({task}) {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.createTask({task})
       .then((taskItem) => {
         this._store.setItem({key: taskItem.id, item: taskItem.toRAW()});
@@ -40,7 +40,7 @@ class Provider {
   }
 
   updateTask({id, data}) {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.updateTask({id, data})
       .then((task) => {
         this._store.setItem({key: task.id, item: task.toRAW()});
@@ -54,7 +54,7 @@ class Provider {
   }
 
   deleteTask({id}) {
-    if (this._isOnline()) {
+    if (Provider.isOnline()) {
       return this._api.deleteTask({id})
       .then(() => {
         this._store.removeItem({key: id});
@@ -69,7 +69,7 @@ class Provider {
     return this._api.syncTasks({tasks: objectToArray(this._store.getAll())});
   }
 
-  _isOnline() {
+  static isOnline() {
     return window.navigator.onLine;
   }
 }

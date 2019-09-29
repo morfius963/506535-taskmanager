@@ -182,17 +182,6 @@ class TaskController {
     }
   }
 
-  _onEscKeyDownEvent(evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      if (this._container.contains(this._taskEdit.getElement())) {
-        this._onChangeView();
-        this._flatpickerInput.close();
-      }
-    }
-
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
-  }
-
   _setBooleanValue(evt, value) {
     if (evt.currentTarget.classList.contains(`card__btn--disabled`)) {
       evt.currentTarget.classList.remove(`card__btn--disabled`);
@@ -244,6 +233,17 @@ class TaskController {
     };
 
     return entry;
+  }
+
+  _onEscKeyDownEvent(evt) {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      if (this._container.contains(this._taskEdit.getElement())) {
+        this._onChangeView();
+        this._flatpickerInput.close();
+      }
+    }
+
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
 
