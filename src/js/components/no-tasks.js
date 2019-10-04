@@ -2,7 +2,7 @@ import AbstractComponent from "./abstract-component.js";
 
 class NoTasks extends AbstractComponent {
   getTemplate() {
-    return `<p class="board__no-tasks">Congratulations, all tasks were completed! To create a new click on «add new task» button.</p>`;
+    return `<p class="board__no-tasks">Click ADD NEW TASK in menu to create your first task.</p>`;
   }
 }
 

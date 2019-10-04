@@ -49,8 +49,8 @@ class BoardController {
     }
   }
 
-  show(tasks) {
-    if (tasks !== this._tasks) {
+  show(tasks = null) {
+    if (tasks !== this._tasks && tasks !== null) {
       this._setTasks(tasks);
     }
 

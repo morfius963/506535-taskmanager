@@ -1,6 +1,7 @@
 import Task from "../components/task.js";
 import TaskEdit from "../components/task-edit.js";
 import {renderElement, unrenderElement} from "../utils.js";
+import {debounce} from "../debounce.js";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/themes/light.css";
@@ -45,21 +46,25 @@ class TaskController {
     this._taskView.getElement()
       .querySelector(`.card__btn--archive`)
       .addEventListener(`click`, (evt) => {
-        this._setBooleanValue(evt, `isArchive`);
-        this._onDataChange(`update`, this._updatedBooleanData);
+        debounce(() => {
+          this._setBooleanValue(evt, `isArchive`);
+          this._onDataChange(`update`, this._updatedBooleanData);
+        });
+      });
+
+    this._taskView.getElement()
+      .querySelector(`.card__btn--favorites`)
+      .addEventListener(`click`, (evt) => {
+        debounce(() => {
+          this._setBooleanValue(evt, `isFavorite`);
+          this._onDataChange(`update`, this._updatedBooleanData);
+        });
       });
 
     this._taskEdit.getElement()
       .querySelector(`.card__btn--archive`)
       .addEventListener(`click`, (evt) => {
         this._setBooleanValue(evt, `isArchive`);
-      });
-
-    this._taskView.getElement()
-      .querySelector(`.card__btn--favorites`)
-      .addEventListener(`click`, (evt) => {
-        this._setBooleanValue(evt, `isFavorite`);
-        this._onDataChange(`update`, this._updatedBooleanData);
       });
 
     this._taskEdit.getElement()
@@ -183,11 +188,11 @@ class TaskController {
   }
 
   _setBooleanValue(evt, value) {
-    if (evt.currentTarget.classList.contains(`card__btn--disabled`)) {
-      evt.currentTarget.classList.remove(`card__btn--disabled`);
+    if (evt.target.classList.contains(`card__btn--disabled`)) {
+      evt.target.classList.remove(`card__btn--disabled`);
       this._updatedBooleanData[value] = false;
     } else {
-      evt.currentTarget.classList.add(`card__btn--disabled`);
+      evt.target.classList.add(`card__btn--disabled`);
       this._updatedBooleanData[value] = true;
     }
   }

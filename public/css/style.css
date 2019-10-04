@@ -797,6 +797,7 @@ body {
 .result__empty {
   text-align: center;
   text-transform: uppercase;
+  line-height: 1.5;
 }
 
 .statistic {

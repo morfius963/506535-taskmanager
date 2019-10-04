@@ -12,7 +12,7 @@ class Task extends AbstractComponent {
     this._color = color;
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
-    this._isDeadLine = moment(Date.now()).subtract(1, `days`).isAfter(dueDate);
+    this._isDeadLine = moment(Date.now()).subtract(1, `days`).isAfter(dueDate) && !isArchive;
 
     this._formattedDate = this._makeFormattedDate(dueDate);
   }

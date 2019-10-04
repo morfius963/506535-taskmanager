@@ -4,6 +4,7 @@ import SearchResultInfo from "../components/search-result-info.js";
 import SearchNoResult from "../components/search-no-result.js";
 import TaskListController from "./task-list-controller.js";
 import {renderElement, unrenderElement} from "../utils.js";
+import moment from "moment";
 
 class SearchController {
   constructor(container, search, onBackButtonClick, onDataChange) {
@@ -39,10 +40,33 @@ class SearchController {
 
     this._search.getElement().querySelector(`input`)
       .addEventListener(`keyup`, (evt) => {
-        const {value} = evt.target;
-        const tasks = this._tasks.filter((task) => {
-          return task.description.includes(value);
-        });
+        let value = evt.target.value.toLowerCase();
+        let tasks = null;
+
+        if (value.length < 3) {
+          return;
+        }
+
+        switch (value[0]) {
+          case `#`:
+            value = value.substring(1);
+            tasks = this._tasks.filter((task) => {
+              return Array.from(task.tags).join(` `).toLowerCase().includes(value.trim());
+            });
+            break;
+
+          case `D`:
+            value = value.substring(1);
+            tasks = this._tasks.filter((task) => {
+              return moment(task.dueDate).format(`DD.MM.YYYY`).substring(0, value.trim().length) === value.trim();
+            });
+            break;
+
+          default:
+            tasks = this._tasks.filter((task) => {
+              return task.description.toLowerCase().includes(value);
+            });
+        }
 
         this._showSearchResult(value, tasks);
       });
@@ -61,6 +85,10 @@ class SearchController {
       this._showSearchResult(``, tasks);
       this._searchResult.getElement().classList.remove(`visually-hidden`);
     }
+  }
+
+  isHidden() {
+    return this._searchResult.getElement().classList.contains(`visually-hidden`);
   }
 
   _showSearchResult(text, tasks) {

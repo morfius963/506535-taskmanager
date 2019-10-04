@@ -129,7 +129,11 @@ provider.getTasks()
       if (evt.target.tagName.toLowerCase() !== `input`) {
         return;
       }
+      searchController.hide();
+      mainStatistics.hide();
+      boardController.show();
       boardController.renderBoard();
+      mainMenu.getElement().querySelector(`#${IdValues.TASKS}`).checked = true;
     });
     document.querySelector(`.main__filter`).replaceWith(mainFilters.getElement());
   })
@@ -166,6 +170,14 @@ mainMenu.getElement().addEventListener(`change`, (evt) => {
       boardController.createTask();
       mainMenu.getElement().querySelector(`#${IdValues.TASKS}`).checked = true;
       break;
+  }
+});
+
+mainSearch.getElement().addEventListener(`click`, () => {
+  if (searchController.isHidden()) {
+    mainStatistics.hide();
+    boardController.hide();
+    searchController.show(taskMainData);
   }
 });
 

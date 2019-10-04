@@ -220,9 +220,9 @@ class Statistics extends AbstractComponent {
   }
 
   _createDaysChart() {
-    const dayChartLabels = [...new Set(this._sortedTasks
-      .map(({dueDate}) => moment(dueDate).format(`DD MMM`)))]
-      .sort((a, b) => a > b ? 1 : -1);
+    const dayChartLabels = [...new Set(this._sortedTasks.slice()
+      .sort((a, b) => moment(a.dueDate).valueOf() - moment(b.dueDate).valueOf())
+      .map(({dueDate}) => moment(dueDate).format(`DD MMM`)))];
     const dayChartData = dayChartLabels.reduce((acc, label) => {
       const filteredByLabelTasks = this._sortedTasks.filter(({dueDate}) => moment(dueDate).format(`DD MMM`) === label);
       const labelData = filteredByLabelTasks.length;

@@ -13,7 +13,7 @@ class TaskEdit extends AbstractComponent {
     this._isArchive = isArchive;
     this._isFavorite = isFavorite;
     this._changedColor = color;
-    this._isDeadLine = moment(Date.now()).subtract(1, `days`).isAfter(dueDate);
+    this._isDeadLine = moment(Date.now()).subtract(1, `days`).isAfter(dueDate) && !isArchive;
 
     this._formattedDate = this._makeFormattedDate(dueDate);
 
@@ -63,6 +63,8 @@ class TaskEdit extends AbstractComponent {
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
+                maxlength="140"
+                required
               >${this._description}</textarea>
             </label>
           </div>
@@ -130,6 +132,7 @@ class TaskEdit extends AbstractComponent {
                     type="text"
                     class="card__hashtag-input"
                     name="hashtag-input"
+                    maxlength="16"
                     placeholder="Type new hashtag here"
                   />
                 </label>
@@ -284,19 +287,13 @@ class TaskEdit extends AbstractComponent {
     this.getElement()
       .querySelector(`.card__date-deadline-toggle`)
       .addEventListener(`click`, () => {
-        const dateContainer = this.getElement().querySelector(`.card__date-deadline`);
-        const dateInput = this.getElement().querySelector(`.card__date`);
-        const dateStatus = this.getElement().querySelector(`.card__date-status`);
-        const isHidden = dateContainer.classList.contains(`visually-hidden`);
+        const isHidden = this.getElement().querySelector(`.card__date-deadline`).classList.contains(`visually-hidden`);
+        const repDaysElem = this.getElement().querySelector(`.card__repeat-days`);
 
-        if (isHidden) {
-          dateContainer.classList.remove(`visually-hidden`);
-          dateStatus.textContent = `yes`;
-          dateInput.value = this._formattedDate;
-        } else {
-          dateContainer.classList.add(`visually-hidden`);
-          dateStatus.textContent = `no`;
-          dateInput.value = ``;
+        this._setDateElemValue(isHidden);
+
+        if (!repDaysElem.classList.contains(`visually-hidden`)) {
+          this._setRepeatingDaysElemValue(false);
         }
       });
   }
@@ -305,23 +302,49 @@ class TaskEdit extends AbstractComponent {
     this.getElement()
       .querySelector(`.card__repeat-toggle`)
       .addEventListener(`click`, () => {
-        const repeatContainer = this.getElement().querySelector(`.card__repeat-days`);
-        const repeatStatus = this.getElement().querySelector(`.card__repeat-status`);
-        const repeatValues = this.getElement().querySelectorAll(`.card__repeat-day-input`);
-        const isHidden = repeatContainer.classList.contains(`visually-hidden`);
+        const isHidden = this.getElement().querySelector(`.card__repeat-days`).classList.contains(`visually-hidden`);
+        const dateElem = this.getElement().querySelector(`.card__date-deadline`);
 
-        this.getElement().classList.toggle(`card--repeat`);
+        this._setRepeatingDaysElemValue(isHidden);
 
-        if (isHidden) {
-          repeatContainer.classList.remove(`visually-hidden`);
-          repeatStatus.textContent = `yes`;
-          this._setDefaultDayValue(repeatValues, true);
-        } else {
-          repeatContainer.classList.add(`visually-hidden`);
-          repeatStatus.textContent = `no`;
-          this._setDefaultDayValue(repeatValues, false);
+        if (!dateElem.classList.contains(`visually-hidden`)) {
+          this._setDateElemValue(false);
         }
       });
+  }
+
+  _setDateElemValue(isHidden) {
+    const dateContainer = this.getElement().querySelector(`.card__date-deadline`);
+    const dateInput = this.getElement().querySelector(`.card__date`);
+    const dateStatus = this.getElement().querySelector(`.card__date-status`);
+
+    if (isHidden) {
+      dateContainer.classList.remove(`visually-hidden`);
+      dateStatus.textContent = `yes`;
+      dateInput.value = this._formattedDate;
+    } else {
+      dateContainer.classList.add(`visually-hidden`);
+      dateStatus.textContent = `no`;
+      dateInput.value = ``;
+    }
+  }
+
+  _setRepeatingDaysElemValue(isHidden) {
+    const repeatContainer = this.getElement().querySelector(`.card__repeat-days`);
+    const repeatStatus = this.getElement().querySelector(`.card__repeat-status`);
+    const repeatValues = this.getElement().querySelectorAll(`.card__repeat-day-input`);
+
+    this.getElement().classList.toggle(`card--repeat`);
+
+    if (isHidden) {
+      repeatContainer.classList.remove(`visually-hidden`);
+      repeatStatus.textContent = `yes`;
+      this._setDefaultDayValue(repeatValues, true);
+    } else {
+      repeatContainer.classList.add(`visually-hidden`);
+      repeatStatus.textContent = `no`;
+      this._setDefaultDayValue(repeatValues, false);
+    }
   }
 
   _changeCurrentColor() {
@@ -343,6 +366,10 @@ class TaskEdit extends AbstractComponent {
       .addEventListener(`keydown`, (evt) => {
         if (evt.key === `Enter` || evt.code === `Space`) {
           evt.preventDefault();
+
+          if (evt.target.value.length < 3) {
+            return;
+          }
 
           this.getElement().querySelector(`.card__hashtag-list`).insertAdjacentHTML(`beforeend`, `<span class="card__hashtag-inner">
             <input

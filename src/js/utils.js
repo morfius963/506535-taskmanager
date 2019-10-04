@@ -59,8 +59,8 @@ export const unrenderElement = (element) => {
   }
 };
 
-const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
-  (moment(Date.now()).subtract(1, `days`).isAfter(dueDate) ? acc + 1 : acc), 0);
+const getOverdueFilterCount = (tasks) => tasks.reduce((acc, {dueDate, isArchive}) =>
+  (moment(Date.now()).subtract(1, `days`).isAfter(dueDate) && !isArchive ? acc + 1 : acc), 0);
 
 const getTodayFilterCount = (tasks) => tasks.reduce((acc, {dueDate}) =>
   (new Date(dueDate).toDateString() === new Date(Date.now()).toDateString() ? acc + 1 : acc), 0);
