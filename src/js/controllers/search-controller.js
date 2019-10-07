@@ -55,7 +55,7 @@ class SearchController {
             });
             break;
 
-          case `D`:
+          case `d`:
             value = value.substring(1);
             tasks = this._tasks.filter((task) => {
               return moment(task.dueDate).format(`DD.MM.YYYY`).substring(0, value.trim().length) === value.trim();
